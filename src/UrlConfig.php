@@ -46,7 +46,7 @@ class UrlConfig
 				'user' => 'username',
 				'pass' => 'password',
 				'path' => function($val) {
-					return ['database', ltrim($val, '/')];
+					return ['database', $val === NULL ? NULL : ltrim($val, '/')];
 				},
 			];
 		}
@@ -69,13 +69,19 @@ class UrlConfig
 	}
 
 
-	public function get($what, $default = NULL)
+	public function getConfig()
 	{
-		if ($this->config === [] && $this->getUrl() !== NULL) {
+		if ($this->config === [] && $this->getUrl() !== NULL && $this->getUrl() !== '') {
 			$this->int = parse_url($this->getUrl());
 			$this->config = $this->map($this->int);
 		}
-		return $this->config[$what] ?? $default;
+		return $this->config;
+	}
+
+
+	public function get($what, $default = NULL)
+	{
+		return $this->getConfig()[$what] ?? $default;
 	}
 
 
@@ -88,7 +94,7 @@ class UrlConfig
 	public function getPdoDsn()
 	{
 		// "mysql:host=localhost;dbname=my_db"
-		return ($this->int['adapter'] ?? '') . ':host=' . ( $this->int['host'] ?? '') . ';dbname=' . ltrim($this->int['path'] ?? '', '/');
+		return ($this->int['scheme'] ?? '') . ': host=' . ( $this->int['host'] ?? '') . ';dbname=' . ltrim($this->int['path'] ?? '', '/');
 	}
 
 }
