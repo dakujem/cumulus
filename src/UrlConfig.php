@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Dakujem\HerokUtils;
+namespace Dakujem\Cumulus;
 
 
 /**

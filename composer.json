@@ -1,3 +1,31 @@
 {
-	"name": "dakujem/herokutils"
+	"name": "dakujem/cumulus",
+	"description": "Utilities to help with deployment to cloud platforms.",
+    "keywords": ["cloud","heroku","utilities","utility"],
+    "license": "GNU GPL v3",
+	"type": "library",
+	"authors": [
+		{
+			"name": "Andrej Rypák",
+			"email": "xrypak@gmail.com"
+		}
+	],
+	"repositories": [
+		{
+			"type": "vcs",
+			"url": "https://github.com/dakujem/cumulus"
+		}
+	],
+	"require": {
+		"php": "^5.4 || ^7.0"
+	},
+	"require-dev": {
+		"nette/tester": "^1.4",
+		"tracy/tracy": "^2.3"
+	},
+	"autoload": {
+		"psr-4": {
+			"Dakujem\\Cumulus\\": "src/"
+		}
+	}
 }
