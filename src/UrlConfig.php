@@ -17,7 +17,7 @@ namespace Dakujem\Cumulus;
  * 		database => my_db
  * 		port => 3306
  * 		host => localhost
- * 		adapter => mysql
+ * 		driver => mysql
  * 		pdo => "mysql:host=localhost;dbname=my_db"
  * ]
  *
@@ -40,30 +40,25 @@ class UrlConfig
 
 		if ($this->mappings === []) {
 			$this->mappings = [
-				'scheme' => 'adapter',
+				'driver' => 'scheme',
 				'port' => 'port',
 				'host' => 'host',
-				'user' => 'username',
-				'pass' => 'password',
-				'path' => function($val) {
-					return ['database', $val === NULL ? NULL : ltrim($val, '/')];
+				'username' => 'user',
+				'password' => 'pass',
+				'database' => function($config) {
+					$db = $config['path'] ?? NULL;
+					return $db === NULL ? NULL : ltrim($db, '/');
 				},
 			];
 		}
 	}
 
 
-	protected function map(array $config): array
+	protected function map(array $config, array $mappings): array
 	{
 		$res = [];
-		foreach ($this->mappings as $srcKey => $mapping) {
-			$val = $config[$srcKey] ?? NULL;
-			if (is_string($mapping)) {
-				$dstKey = $mapping;
-			} else {
-				list($dstKey, $val) = call_user_func($mapping, $val, $srcKey, $config);
-			}
-			$res[$dstKey] = $val;
+		foreach ($mappings as $name => $mapping) {
+			$res[$name] = is_scalar($mapping) ? ($config[$mapping] ?? NULL) : call_user_func($mapping, $config, $name);
 		}
 		return $res;
 	}
@@ -71,9 +66,10 @@ class UrlConfig
 
 	public function getConfig()
 	{
-		if ($this->config === [] && $this->getUrl() !== NULL && $this->getUrl() !== '') {
-			$this->int = parse_url($this->getUrl());
-			$this->config = $this->map($this->int);
+		$url = $this->getUrl();
+		if ($this->config === [] && $url !== NULL && $url !== '') {
+			$this->int = parse_url($url);
+			$this->config = $this->map($this->int, $this->mappings);
 		}
 		return $this->config;
 	}

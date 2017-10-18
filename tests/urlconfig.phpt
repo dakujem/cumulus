@@ -42,7 +42,7 @@ class _UrlConfigTest extends TestCase
 	{
 
 		$this->runCase('mysql://john:secret@localhost:3306/my_db', [
-			'adapter' => 'mysql',
+			'driver' => 'mysql',
 			'port' => 3306,
 			'host' => 'localhost',
 			'username' => 'john',
@@ -51,7 +51,7 @@ class _UrlConfigTest extends TestCase
 		]);
 
 		$this->runCase('mysqli://localhost:3306/my_db', [
-			'adapter' => 'mysqli',
+			'driver' => 'mysqli',
 			'port' => 3306,
 			'host' => 'localhost',
 			'username' => NULL,
@@ -60,7 +60,7 @@ class _UrlConfigTest extends TestCase
 		]);
 
 		$this->runCase('mysqli://localhost/foobar', [
-			'adapter' => 'mysqli',
+			'driver' => 'mysqli',
 			'port' => NULL,
 			'host' => 'localhost',
 			'username' => NULL,
@@ -69,7 +69,7 @@ class _UrlConfigTest extends TestCase
 		]);
 
 		$this->runCase('test://192.168.3.5:1234', [
-			'adapter' => 'test',
+			'driver' => 'test',
 			'port' => 1234,
 			'host' => '192.168.3.5',
 			'username' => NULL,
@@ -78,7 +78,7 @@ class _UrlConfigTest extends TestCase
 		]);
 
 		$this->runCase('192.168.3.5:1234', [
-			'adapter' => NULL,
+			'driver' => NULL,
 			'port' => 1234,
 			'host' => '192.168.3.5',
 			'username' => NULL,
@@ -87,7 +87,7 @@ class _UrlConfigTest extends TestCase
 		]);
 
 		$this->runCase('localhost:3306', [
-			'adapter' => NULL,
+			'driver' => NULL,
 			'port' => 3306,
 			'host' => 'localhost',
 			'username' => NULL,
@@ -96,7 +96,7 @@ class _UrlConfigTest extends TestCase
 		]);
 
 		$this->runCase('mysql://localhost', [
-			'adapter' => 'mysql',
+			'driver' => 'mysql',
 			'port' => NULL,
 			'host' => 'localhost',
 			'username' => NULL,
@@ -128,7 +128,7 @@ class _UrlConfigTest extends TestCase
 		Assert::equal($expected, $uc->getConfig(), 'Getting complete configuration');
 
 		// test PDO DSN
-		$url && Assert::same("{$expected['adapter']}: host={$expected['host']};dbname={$expected['database']}", $uc->getPdoDsn(), 'PDO DSN string');
+		$url && Assert::same("{$expected['driver']}: host={$expected['host']};dbname={$expected['database']}", $uc->getPdoDsn(), 'PDO DSN string');
 		!$url && Assert::same(": host=;dbname=", $uc->getPdoDsn(), 'PDO DSN string if URL empty');
 	}
 

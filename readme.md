@@ -19,7 +19,7 @@ Pseudo:
  		database => my_db
  		port => 3306
  		host => localhost
- 		adapter => mysql
+ 		driver => mysql
  		pdo => "mysql:host=localhost;dbname=my_db"
  ]
 ```
