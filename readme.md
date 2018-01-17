@@ -26,3 +26,10 @@ Pseudo:
 
 Integrates well with [DiBi](https://github.com/dg/dibi).
 
+
+## Tests
+
+Run unit tests using the following command:
+
+`$` `composer test`
+

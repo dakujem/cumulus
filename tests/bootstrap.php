@@ -18,11 +18,13 @@ use Tracy\Debugger,
 // tester
 Environment::setup();
 
-// debugging
-Debugger::$strictMode = TRUE;
-Debugger::enable();
-Debugger::$maxDepth = 10;
-Debugger::$maxLen = 500;
+// debugging - when not run via a browser
+if (!empty(getallheaders())) {
+	Debugger::$strictMode = TRUE;
+	Debugger::enable();
+	Debugger::$maxDepth = 10;
+	Debugger::$maxLen = 500;
+}
 
 
 // dump shortcut
