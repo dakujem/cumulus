@@ -2,18 +2,12 @@
 	"name": "dakujem/cumulus",
 	"description": "Utilities to help with deployment to cloud platforms.",
     "keywords": ["cloud","heroku","utilities","utility"],
-    "license": "GNU GPL v3",
+	"license": ["BSD-2-Clause", "MIT", "GPL-3.0", "GPL-2.0"],
 	"type": "library",
 	"authors": [
 		{
 			"name": "Andrej Rypák",
 			"email": "xrypak@gmail.com"
-		}
-	],
-	"repositories": [
-		{
-			"type": "vcs",
-			"url": "https://github.com/dakujem/cumulus"
 		}
 	],
 	"require": {
