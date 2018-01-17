@@ -1,7 +1,7 @@
 {
 	"name": "dakujem/cumulus",
 	"description": "Utilities to help with deployment to cloud platforms.",
-    "keywords": ["cloud","heroku","utilities","utility"],
+	"keywords": ["cloud", "heroku", "utilities", "utility"],
 	"license": ["BSD-2-Clause", "MIT", "GPL-3.0", "GPL-2.0"],
 	"type": "library",
 	"authors": [
