@@ -1,9 +1,8 @@
 {
 	"name": "dakujem/cumulus",
-	"description": "Utilities to help with deployment to cloud platforms.",
-	"keywords": ["cloud", "heroku", "utilities", "utility"],
+	"description": "A set of utilities for modern development.",
+	"keywords": ["cloud", "heroku", "utilities", "utility", "iterator"],
 	"license": ["BSD-2-Clause", "MIT", "GPL-3.0", "GPL-2.0"],
-	"type": "library",
 	"authors": [
 		{
 			"name": "Andrej Rypák",
