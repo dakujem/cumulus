@@ -7,7 +7,9 @@
 //
 $dir = '.';
 
-// run the test
-$time1 = microtime(TRUE);
-require_once($dir . '/urlconfig.phpt');
-print '<hr/><pre>urlconfig.phpt | Finished at: ' . date('Y-m-d H:i:s') . ' | Runtime: ' . (microtime(TRUE) - $time1 ) . 's</pre>';
+// run the tests
+foreach (['urlconfig', 'lazyiterator',] as $test) {
+	$time1 = microtime(TRUE);
+	require_once($dir . '/' . $test . '.phpt');
+	print '<hr/><pre>urlconfig.phpt | Finished at: ' . date('Y-m-d H:i:s') . ' | Runtime: ' . (microtime(TRUE) - $time1 ) . 's</pre>';
+}

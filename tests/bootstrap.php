@@ -19,7 +19,7 @@ use Tracy\Debugger,
 Environment::setup();
 
 // debugging - when not run via a browser
-if (!empty(getallheaders())) {
+if (function_exists('getallheaders') && !empty(getallheaders())) {
 	Debugger::$strictMode = TRUE;
 	Debugger::enable();
 	Debugger::$maxDepth = 10;

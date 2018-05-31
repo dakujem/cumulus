@@ -4,8 +4,11 @@
 namespace Dakujem\Cumulus;
 
 use ArrayIterator,
+	Iterator,
 	IteratorIterator,
-	OuterIterator;
+	LogicException,
+	OuterIterator,
+	Traversable;
 
 
 /**
@@ -70,7 +73,13 @@ class LazyIterator implements OuterIterator
 	{
 		if ($this->iterator === NULL) {
 			$res = call_user_func($this->provider);
-			$this->iterator = is_array($res) ? new ArrayIterator($res) : new IteratorIterator($res);
+			if (is_array($res)) {
+				$this->iterator = new ArrayIterator($res);
+			} elseif ($res instanceof Traversable) {
+				$this->iterator = new IteratorIterator($res);
+			} else {
+				throw new LogicException(sprintf('The provider callable must return an iterable type, %s returned.', is_object($res) ? 'an instance of ' . get_class($res) : gettype($res)));
+			}
 		}
 		return $this->iterator;
 	}

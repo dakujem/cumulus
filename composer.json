@@ -1,7 +1,7 @@
 {
 	"name": "dakujem/cumulus",
 	"description": "A set of utilities for modern development.",
-	"keywords": ["cloud", "heroku", "utilities", "utility", "iterator"],
+	"keywords": ["cloud", "microservice", "utilities", "utility", "iterator"],
 	"license": ["BSD-2-Clause", "MIT", "GPL-3.0", "GPL-2.0"],
 	"authors": [
 		{
@@ -13,7 +13,7 @@
 		"php": "^7.0"
 	},
 	"require-dev": {
-		"nette/tester": "^1.4",
+		"nette/tester": "^2",
 		"tracy/tracy": "^2.3"
 	},
 	"autoload": {

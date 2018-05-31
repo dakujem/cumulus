@@ -6,7 +6,7 @@
  */
 
 
-namespace Dakujem\Cumulus\Time;
+namespace Dakujem\Cumulus\Test;
 
 require_once __DIR__ . '/bootstrap.php';
 
