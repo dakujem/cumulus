@@ -38,7 +38,7 @@ class _UrlConfigTest extends TestCase
 	//----------------------- Test methods -------------------------------------
 
 
-	public function testFoo()
+	public function testUrlParsing()
 	{
 
 		$this->runCase('mysql://john:secret@localhost:3306/my_db', [
@@ -48,88 +48,174 @@ class _UrlConfigTest extends TestCase
 			'username' => 'john',
 			'password' => 'secret',
 			'database' => 'my_db',
+			'params' => null,
+			'fragment' => null,
 		]);
 
 		$this->runCase('mysqli://localhost:3306/my_db', [
 			'driver' => 'mysqli',
 			'port' => 3306,
 			'host' => 'localhost',
-			'username' => NULL,
-			'password' => NULL,
+			'username' => null,
+			'password' => null,
 			'database' => 'my_db',
+			'params' => null,
+			'fragment' => null,
+		]);
+
+		$this->runCase('mysql://john:secret@localhost:3306/my_db?foo=bar&empty=&lazy=true&eager=false&zero=0&integer=42&float=3.14159#some-fragment/another#13', [
+			'driver' => 'mysql',
+			'port' => 3306,
+			'host' => 'localhost',
+			'username' => 'john',
+			'password' => 'secret',
+			'database' => 'my_db',
+			'params' => [
+				'foo' => 'bar',
+				'empty' => '',
+				'lazy' => true,
+				'eager' => false,
+				'zero' => 0,
+				'integer' => 42,
+				'float' => 3.14159,
+			],
+			'fragment' => 'some-fragment/another#13',
+		]);
+
+		$this->runCase('mysql://localhost?arr[42]=42&arr[hello]=world&arr[a][b][c]=deep+recursion', [
+			'driver' => 'mysql',
+			'port' => null,
+			'host' => 'localhost',
+			'username' => null,
+			'password' => null,
+			'database' => null,
+			'params' => [
+				'arr' => [
+					'42' => 42,
+					'hello' => 'world',
+					'a' => ['b' => ['c' => 'deep recursion']],
+				],
+			],
+			'fragment' => null,
 		]);
 
 		$this->runCase('mysqli://localhost/foobar', [
 			'driver' => 'mysqli',
-			'port' => NULL,
+			'port' => null,
 			'host' => 'localhost',
-			'username' => NULL,
-			'password' => NULL,
+			'username' => null,
+			'password' => null,
 			'database' => 'foobar',
+			'params' => null,
+			'fragment' => null,
+		]);
+		$this->runCase('mysqli://localhost#foobar', [
+			'driver' => 'mysqli',
+			'port' => null,
+			'host' => 'localhost',
+			'username' => null,
+			'password' => null,
+			'database' => null,
+			'params' => null,
+			'fragment' => 'foobar',
+		]);
+		$this->runCase('mysqli://localhost?foobar', [
+			'driver' => 'mysqli',
+			'port' => null,
+			'host' => 'localhost',
+			'username' => null,
+			'password' => null,
+			'database' => null,
+			'params' => ['foobar' => ''],
+			'fragment' => null,
 		]);
 
 		$this->runCase('test://192.168.3.5:1234', [
 			'driver' => 'test',
 			'port' => 1234,
 			'host' => '192.168.3.5',
-			'username' => NULL,
-			'password' => NULL,
-			'database' => NULL,
+			'username' => null,
+			'password' => null,
+			'database' => null,
+			'params' => null,
+			'fragment' => null,
 		]);
 
 		$this->runCase('192.168.3.5:1234', [
-			'driver' => NULL,
+			'driver' => null,
 			'port' => 1234,
 			'host' => '192.168.3.5',
-			'username' => NULL,
-			'password' => NULL,
-			'database' => NULL,
+			'username' => null,
+			'password' => null,
+			'database' => null,
+			'params' => null,
+			'fragment' => null,
 		]);
 
 		$this->runCase('localhost:3306', [
-			'driver' => NULL,
+			'driver' => null,
 			'port' => 3306,
 			'host' => 'localhost',
-			'username' => NULL,
-			'password' => NULL,
-			'database' => NULL,
+			'username' => null,
+			'password' => null,
+			'database' => null,
+			'params' => null,
+			'fragment' => null,
 		]);
 
 		$this->runCase('mysql://localhost', [
 			'driver' => 'mysql',
-			'port' => NULL,
+			'port' => null,
 			'host' => 'localhost',
-			'username' => NULL,
-			'password' => NULL,
-			'database' => NULL,
+			'username' => null,
+			'password' => null,
+			'database' => null,
+			'params' => null,
+			'fragment' => null,
 		]);
 
-		$this->runCase(NULL, []);
+		$this->runCase(null, []);
 		$this->runCase('', []);
 	}
-
 
 	//--------------------------------------------------------------------------
 	//----------------------- Aux methods --------------------------------------
 
-	private function runCase($url, array $expected)
+
+	/**
+	 * Note:
+	 * 		The order of members in the $expected array matters!
+	 *
+	 * @param string $url
+	 * @param array $expected
+	 * @param bool $fullTest
+	 */
+	private function runCase($url, array $expected, bool $fullTest = true)
 	{
 		$uc = new UrlConfig($url);
 
 		// sanity test
 		Assert::same($url, $uc->getUrl(), 'Getting the original URL');
 
-		// test individual variables
+		// test getting individual variables
 		foreach (array_keys($expected) as $key) {
-			Assert::same($expected[$key], $uc->get($key), 'Getting "' . $key . '" key');
+			Assert::same($expected[$key], $uc->get($key), "Getting \"$key\" key from $url");
 		}
 
-		// test getting the whole mapped config
-		Assert::equal($expected, $uc->getConfig(), 'Getting complete configuration');
+		// expected PDO
+		$pdo = $url ? "{$expected['driver']}:host={$expected['host']};dbname={$expected['database']}" : '';
+
+		if ($fullTest) {
+			// test getting the whole mapped config
+			if ($pdo !== '') {
+				// Note: the full config also contains the PDO string
+				$expected['pdo'] = $pdo;
+			}
+			Assert::equal($expected, $uc->getConfig(), "Getting complete configuration from $url");
+		}
 
 		// test PDO DSN
-		$url && Assert::same("{$expected['driver']}:host={$expected['host']};dbname={$expected['database']}", $uc->getPdoDsn(), 'PDO DSN string');
-		!$url && Assert::same(":host=;dbname=", $uc->getPdoDsn(), 'PDO DSN string if URL empty');
+		Assert::same($pdo, $uc->getPdoDsn(), 'PDO DSN string');
 	}
 
 }
