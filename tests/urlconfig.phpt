@@ -128,8 +128,8 @@ class _UrlConfigTest extends TestCase
 		Assert::equal($expected, $uc->getConfig(), 'Getting complete configuration');
 
 		// test PDO DSN
-		$url && Assert::same("{$expected['driver']}: host={$expected['host']};dbname={$expected['database']}", $uc->getPdoDsn(), 'PDO DSN string');
-		!$url && Assert::same(": host=;dbname=", $uc->getPdoDsn(), 'PDO DSN string if URL empty');
+		$url && Assert::same("{$expected['driver']}:host={$expected['host']};dbname={$expected['database']}", $uc->getPdoDsn(), 'PDO DSN string');
+		!$url && Assert::same(":host=;dbname=", $uc->getPdoDsn(), 'PDO DSN string if URL empty');
 	}
 
 }

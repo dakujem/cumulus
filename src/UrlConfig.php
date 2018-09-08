@@ -90,7 +90,7 @@ class UrlConfig
 	public function getPdoDsn()
 	{
 		// "mysql:host=localhost;dbname=my_db"
-		return ($this->int['scheme'] ?? '') . ': host=' . ( $this->int['host'] ?? '') . ';dbname=' . ltrim($this->int['path'] ?? '', '/');
+		return ($this->int['scheme'] ?? '') . ':host=' . ( $this->int['host'] ?? '') . ';dbname=' . ltrim($this->int['path'] ?? '', '/');
 	}
 
 }
