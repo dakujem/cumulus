@@ -28,13 +28,13 @@ namespace Dakujem\Cumulus;
  */
 class UrlConfig
 {
-	private $url = NULL;
+	private $url = null;
 	protected $mappings = [];
 	private $config = [];
 	private $int = [];
 
 
-	public function __construct($url = NULL)
+	public function __construct($url = null)
 	{
 		$this->url = $url;
 
@@ -46,8 +46,8 @@ class UrlConfig
 				'username' => 'user',
 				'password' => 'pass',
 				'database' => function($config) {
-					$db = $config['path'] ?? NULL;
-					return $db === NULL ? NULL : ltrim($db, '/');
+					$db = $config['path'] ?? null;
+					return $db === null ? null : ltrim($db, '/');
 				},
 			];
 		}
@@ -58,7 +58,7 @@ class UrlConfig
 	{
 		$res = [];
 		foreach ($mappings as $name => $mapping) {
-			$res[$name] = is_scalar($mapping) ? ($config[$mapping] ?? NULL) : call_user_func($mapping, $config, $name);
+			$res[$name] = is_scalar($mapping) ? ($config[$mapping] ?? null) : call_user_func($mapping, $config, $name);
 		}
 		return $res;
 	}
@@ -67,7 +67,7 @@ class UrlConfig
 	public function getConfig()
 	{
 		$url = $this->getUrl();
-		if ($this->config === [] && $url !== NULL && $url !== '') {
+		if ($this->config === [] && $url !== null && $url !== '') {
 			$this->int = parse_url($url);
 			$this->config = $this->map($this->int, $this->mappings);
 		}
@@ -75,7 +75,7 @@ class UrlConfig
 	}
 
 
-	public function get($what, $default = NULL)
+	public function get($what, $default = null)
 	{
 		return $this->getConfig()[$what] ?? $default;
 	}

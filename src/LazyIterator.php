@@ -41,7 +41,7 @@ class LazyIterator implements OuterIterator
 	 *
 	 * @var Iterator
 	 */
-	private $iterator = NULL;
+	private $iterator = null;
 
 	/**
 	 * An array of item mappers that act as a pipeline.
@@ -55,7 +55,7 @@ class LazyIterator implements OuterIterator
 	private $pipeline = [];
 
 
-	public function __construct(callable $provider, callable $mapper = NULL)
+	public function __construct(callable $provider, callable $mapper = null)
 	{
 		$this->provider = $provider;
 		$mapper !== NULL && $this->addMapper($mapper);
@@ -71,7 +71,7 @@ class LazyIterator implements OuterIterator
 
 	public function getInnerIterator(): Iterator
 	{
-		if ($this->iterator === NULL) {
+		if ($this->iterator === null) {
 			$res = call_user_func($this->provider);
 			if (is_array($res)) {
 				$this->iterator = new ArrayIterator($res);
