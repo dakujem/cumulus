@@ -11,8 +11,8 @@ namespace Dakujem\Cumulus\Test;
 require_once __DIR__ . '/bootstrap.php';
 
 use ArrayIterator,
+	Dakujem\Cumulus\Dsn,
 	Dakujem\Cumulus\LazyIterator,
-	Dakujem\Cumulus\UrlConfig,
 	LogicException,
 	Tester\Assert,
 	Tester\TestCase;
@@ -77,10 +77,10 @@ class _LayIteratorTest extends TestCase
 		}, LogicException::class, 'The provider callable must return an iterable type, integer returned.');
 		Assert::exception(function() {
 			$it = new LazyIterator(function() {
-				return new UrlConfig();
+				return new Dsn();
 			});
 			iterator_to_array($it);
-		}, LogicException::class, 'The provider callable must return an iterable type, an instance of Dakujem\Cumulus\UrlConfig returned.');
+		}, LogicException::class, 'The provider callable must return an iterable type, an instance of Dakujem\Cumulus\Dsn returned.');
 
 
 	}

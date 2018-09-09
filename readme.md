@@ -2,29 +2,38 @@
 
 A ~~set~~ pair of utilities for modern development.
 
+Contains:
+- `Dsn`
+	- a DSN configuration wrapper
+- `LazyIterator`
+	- an iterator that will wrap a collection provider function and only call it once actually needed
 
-## UrlConfig
+
+## Dsn
 
 - replace multiple ENV variables for single URL DSN strings
-- ideal for applications using multiple cloud services
+- ideal for applications using remote services
 
-Class `UrlConfig` is useful for connection configurations that use URL DSNs
-when an app needs separate config fields or PDO DSN, or when you simply want to squash 6 ENV variables into one.
+Class `Dsn` is useful for connection configurations that use URL DSNs
+when a PHP app needs separate config fields or a PDO string,
+or when one simply wants to squash multiple ENV variables into one.
 
 Examples:
-- JawsDB MySQL or JawsDB MariaDB on Heroku
+- database services
+- remote storage services
 
 What you'll get (pseudo):
 ```
- "mysql://john:secret@localhost:3306/my_db" => [
- 		username => john
- 		password => secret
- 		database => my_db
- 		port => 3306
- 		host => localhost
- 		driver => mysql
- 		pdo => "mysql:host=localhost;dbname=my_db"
- ]
+"mysqli://john:secret@localhost:3306/my_db?lazy=true&connections=10" => [
+		username => john
+		password => secret
+		database => my_db
+		port => 3306
+		host => localhost
+ 		driver => mysqli
+		params => [lazy:true, connections:10]
+		pdo => "mysqli:host=localhost;dbname=my_db"
+]
 ```
 
 Integrates well with [DiBi]( https://github.com/dg/dibi ) or Laravel configurations.
@@ -45,7 +54,7 @@ DB_DSN=mysql://homestead:secret@127.0.0.1:3306/homestead
 
 Then, your `database.php` can contain a section like this:
 ```php
-$dbc = new Dakujem\Cumulus\UrlConfig(env('DB_DSN'));
+$dbc = new Dakujem\Cumulus\Dsn(env('DB_DSN'));
 return [
 	'connections' => [
 		'mysql' => [
@@ -64,7 +73,7 @@ return [
 
 ## LazyIterator
 
-- when an iterable collection must be passed but it has not yet been fetched
+- when an iterable collection must be passed somewhere but the collection has not yet been fetched
 - when mapping of the elements of the set is needed, but the set is lazy-loaded itself (may save memory)
 - useful for wrapping api calls (in certain cases)
 
@@ -78,7 +87,6 @@ that is then passed to the component for rendering.
 You can be sure the API only gets called when the result is actually needed.
 
 Furthermore, you can apply a number of mapping functions in a manner similar to `array_map` function.
-
 
 
 ## Tests
