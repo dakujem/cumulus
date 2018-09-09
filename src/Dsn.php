@@ -3,11 +3,13 @@
 
 namespace Dakujem\Cumulus;
 
-use LogicException;
+use ArrayAccess,
+	Exception,
+	LogicException;
 
 
 /**
- * DSN-style configuration wrapper.
+ * DSN-style configuration wrapper. Lazy and immutable.
  *
  * Useful for connection configurations that use URL DSNs but the app needs separate config fields or PDO DSN,
  * for example:
@@ -25,14 +27,18 @@ use LogicException;
  * 		pdo => "mysql:host=localhost;dbname=my_db"
  * ]
  *
+ * Usage:
+ * 		$dsn = new Dsn("mysql://john:secret@localhost:3306/my_db");
+ * 		$dsn->getConfig();			// whole configuration array
+ * 		$dsn->host;					// magic props
+ * 		$dsn['pdo'];				// array access
+ * 		$dsn->get('port', 3306);	// method access, with optional default value
  *
- * @todo support magic method calls get* ($dsn->getPort(), $dsn->getHost()) or support magic props ($dsn->port, $dsn->host)
- * @todo also support array access
- * @todo implement __toString (json)
+ * Note: the immutability is related to the configuration, not to the class itself.
  *
  * @author Andrej Rypák (dakujem) <xrypak@gmail.com>
  */
-class Dsn
+class Dsn implements ArrayAccess
 {
 
 	/**
@@ -40,14 +46,14 @@ class Dsn
 	 *
 	 * @var string
 	 */
-	private $url = null;
+	protected $url = null;
 
 	/**
 	 * Mapped configuration array.
 	 *
 	 * @var array
 	 */
-	private $config = [];
+	protected $config = [];
 
 	/**
 	 * Array of mappings.
@@ -70,7 +76,7 @@ class Dsn
 	 *
 	 * @var array
 	 */
-	private $int = [];
+	protected $int = [];
 
 
 	/**
@@ -228,6 +234,49 @@ class Dsn
 			return $params;
 		};
 		return call_user_func($foonc, $params);
+	}
+
+
+	public function __toString()
+	{
+		try {
+			return json_encode($this->getConfig());
+		} catch (Exception $e) {
+			return '';
+		}
+	}
+
+
+	/**
+	 * Provide magic prop access.
+	 */
+	public function __get($name)
+	{
+		return $this->get($name);
+	}
+
+
+	public function offsetGet($offset)
+	{
+		return $this->get($offset);
+	}
+
+
+	public function offsetExists($offset): bool
+	{
+		return $this->get($offset) !== null;
+	}
+
+
+	public function offsetSet($offset, $value): void
+	{
+		throw new LogicException('It is not possible to mutate the configuration.');
+	}
+
+
+	public function offsetUnset($offset): void
+	{
+		throw new LogicException('It is not possible to mutate the configuration.');
 	}
 
 }

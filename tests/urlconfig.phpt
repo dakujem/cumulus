@@ -181,7 +181,14 @@ class _UrlConfigTest extends TestCase
 
 	public function testUsage()
 	{
+		// test multiple ways to obtain config values
+		$dsn = new UrlConfig('mysql://john:secret@localhost:3306/my_db');
+		Assert::same('localhost', $dsn->get('host'), "Getter method access");
+		Assert::same('localhost', $dsn->host, "Magic props");
+		Assert::same('localhost', $dsn['host'], "Array access");
 
+		// test __toString
+		Assert::same('{"driver":"mysql","port":3306,"host":"localhost","username":"john","password":"secret","database":"my_db","params":null,"fragment":null,"pdo":"mysql:host=localhost;dbname=my_db"}', (string) $dsn, "Convert to string");
 	}
 
 	//--------------------------------------------------------------------------
@@ -198,14 +205,14 @@ class _UrlConfigTest extends TestCase
 	 */
 	private function runCase($url, array $expected, bool $fullTest = true)
 	{
-		$uc = new UrlConfig($url);
+		$dsn = new UrlConfig($url);
 
 		// sanity test
-		Assert::same($url, $uc->getUrl(), 'Getting the original URL');
+		Assert::same($url, $dsn->getUrl(), 'Getting the original URL');
 
 		// test getting individual variables
 		foreach (array_keys($expected) as $key) {
-			Assert::same($expected[$key], $uc->get($key), "Getting \"$key\" key from $url");
+			Assert::same($expected[$key], $dsn->get($key), "Getting \"$key\" key from $url");
 		}
 
 		// expected PDO
@@ -217,11 +224,11 @@ class _UrlConfigTest extends TestCase
 				// Note: the full config also contains the PDO string
 				$expected['pdo'] = $pdo;
 			}
-			Assert::equal($expected, $uc->getConfig(), "Getting complete configuration from $url");
+			Assert::equal($expected, $dsn->getConfig(), "Getting complete configuration from $url");
 		}
 
 		// test PDO DSN
-		Assert::same($pdo, $uc->getPdoDsn(), 'PDO DSN string');
+		Assert::same($pdo, $dsn->getPdoDsn(), 'PDO DSN string');
 	}
 
 }

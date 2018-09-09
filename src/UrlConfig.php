@@ -19,7 +19,7 @@ class UrlConfig extends Dsn
 	 * Return a PDO string in format:
 	 * "mysql:host=localhost;dbname=my_db"
 	 *
-	 * Note: This is an alias to calling $conf->get('pdo', '')
+	 * @deprecated This is an alias to calling $conf->get('pdo', '')
 	 *
 	 * @return string
 	 */
