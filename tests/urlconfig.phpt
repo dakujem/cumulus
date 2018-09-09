@@ -10,7 +10,8 @@ namespace Dakujem\Cumulus\Test;
 
 require_once __DIR__ . '/bootstrap.php';
 
-use Dakujem\Cumulus\UrlConfig,
+use Dakujem\Cumulus\Dsn,
+	Dakujem\Cumulus\UrlConfig,
 	Tester\Assert,
 	Tester\TestCase;
 
@@ -189,6 +190,18 @@ class _UrlConfigTest extends TestCase
 
 		// test __toString
 		Assert::same('{"driver":"mysql","port":3306,"host":"localhost","username":"john","password":"secret","database":"my_db","params":null,"fragment":null,"pdo":"mysql:host=localhost;dbname=my_db"}', (string) $dsn, "Convert to string");
+	}
+
+
+	public function testValueMapping()
+	{
+		// this is a test for a useful case when, for example, one wants to map from "mysql" to "mysqli" driver without changing the DSN URL
+		$dsn = new Dsn('mysql://john:secret@localhost:3306/my_db', [
+			'driver' => Dsn::valueMapper(['mysql' => 'mysqli'], 'scheme'), // mapping scheme
+			'port' => Dsn::valueMapper([3306 => 1234]), // mapping port
+		]);
+		Assert::same('mysqli', $dsn->driver, 'The driver got converted from "mysql" to "mysqli"');
+		Assert::same(1234, $dsn->port, 'The port got converted from "3306" to "1234"');
 	}
 
 	//--------------------------------------------------------------------------

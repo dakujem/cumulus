@@ -191,9 +191,24 @@ class Dsn implements ArrayAccess
 	}
 
 
-	public static function valueMapper(array $valueMap): callable
+	/**
+	 * Returns a mapper that can be used to convert values to different values.
+	 *
+	 * Example: converting deprecated "mysql" adapter to "mysqli"
+	 * $dsn = new Dsn('mysql://localhost/my_db', [
+	 * 		'driver' => Dsn::valueMapper(['mysql' => 'mysqli'], 'scheme'),
+	 * ]);
+	 * $dsn->driver  // "mysqli"
+	 *
+	 * @param array $valueMap
+	 * @param string $component
+	 * @return callable
+	 */
+	public static function valueMapper(array $valueMap, string $component = null): callable
 	{
-		return function($value) use ($valueMap) {
+		return function($components, $key) use ($component, $valueMap) {
+			// if $component was not provided, use the configuration $key
+			$value = $components[$component ?? $key] ?? null;
 			return $valueMap[$value] ?? $value;
 		};
 	}
