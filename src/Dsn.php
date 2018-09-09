@@ -51,13 +51,14 @@ class Dsn implements ArrayAccess
 	/**
 	 * Mapped configuration array.
 	 *
-	 * @var array
+	 * @var array|null
 	 */
-	protected $config = [];
+	protected $config = null;
 
 	/**
 	 * Array of mappings.
-	 * URL components can be used (see parse_url documentation for more info):
+	 * Format: [ desiredKey => mapper, ], where each mapper is either string name of a URL component or a callable
+	 * Any of the URL components can be used (see parse_url documentation for more info):
 	 * - scheme
 	 * - user
 	 * - pass
@@ -67,16 +68,9 @@ class Dsn implements ArrayAccess
 	 * - query (after ? )
 	 * - fragment (after # )
 	 *
-	 * @var array in format: [ desiredKey => mapper, ] where mapper is either string name of a component or callable returning a string
+	 * @var array|null
 	 */
 	protected $mappings = [];
-
-	/**
-	 * URL compnents, the result of parse_url call.
-	 *
-	 * @var array
-	 */
-	protected $int = [];
 
 
 	/**
@@ -101,10 +95,10 @@ class Dsn implements ArrayAccess
 	 */
 	public function getConfig(): array
 	{
-		$url = $this->getUrl();
-		if ($this->config === [] && $url !== null && $url !== '') {
-			$this->int = parse_url($url);
-			$this->config = $this->map($this->int, $this->mappings);
+		if ($this->config === null) {
+			$url = $this->getUrl();
+			$this->config = $url !== null && $url !== '' ? static::map(parse_url($url), $this->mappings) : [];
+			$this->mappings = null;
 		}
 		return $this->config;
 	}
@@ -181,7 +175,7 @@ class Dsn implements ArrayAccess
 	 * @param array $mappings
 	 * @return array
 	 */
-	protected function map(array $components, array $mappings): array
+	protected static function map(array $components, array $mappings): array
 	{
 		$res = [];
 		foreach ($mappings as $name => $mapping) {
@@ -252,6 +246,11 @@ class Dsn implements ArrayAccess
 	}
 
 
+	/**
+	 * Casting the Dsn object to string results in a JSON-encoded string containing the configuration array.
+	 *
+	 * @return string
+	 */
 	public function __toString()
 	{
 		try {

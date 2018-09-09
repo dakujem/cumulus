@@ -3,9 +3,9 @@
 A ~~set~~ pair of utilities for modern development.
 
 Contains:
-- `Dsn`
+- [`Dsn`]( #dsn )
 	- a DSN configuration wrapper
-- `LazyIterator`
+- [`LazyIterator`]( #lazyiterator )
 	- an iterator that will wrap a collection provider function and only call it once actually needed
 
 
