@@ -61,12 +61,15 @@ $conf = $dsn->getConfig();
 It is also possible to map the values from the URL, for example for converting the driver value from deprecated "mysql", this can be used:
 ```php
 $dsn = new Dsn('mysql://localhost/my_db', [
-			'driver' => Dsn::valueMapper(['mysql' => 'mysqli'], 'scheme'),
-		]);
+	'driver' => Dsn::valueMapper(['mysql' => 'mysqli'], 'scheme'),
+]);
 echo $dsn->driver;  // "mysqli"
 ```
 
-> :bulb: `Dsn` integrates well with [DiBi]( https://github.com/dg/dibi ) or Laravel configurations.
+### Integration
+
+`Dsn` integrates well with [DiBi]( https://github.com/dg/dibi ), Laravel,
+or any other framework or stack where remote services are used.
 
 In **Laravel**, instead of
 ```
