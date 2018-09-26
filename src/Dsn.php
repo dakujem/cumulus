@@ -129,7 +129,9 @@ class Dsn implements ArrayAccess
 			$this->url = call_user_func($this->url);
 		}
 		if ($this->url !== null && !is_string($this->url)) {
-			throw new LogicException(sprintf('An invalid URL of type %s has been provided.', is_object($this->url) ? get_class($this->url) : gettype($this->url)));
+//			throw new LogicException(sprintf('An invalid URL of type %s has been provided.', is_object($this->url) ? get_class($this->url) : gettype($this->url)));
+			// Note: for BC reasons, invalid values are silently ignored instead of throwing an exception.
+			$this->url = null;
 		}
 		return $this->url;
 	}

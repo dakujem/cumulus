@@ -177,6 +177,14 @@ class _UrlConfigTest extends TestCase
 
 		$this->runCase(null, []);
 		$this->runCase('', []);
+
+		// these tests are provided for backward compatibility
+		$this->runCase(0, [], true);
+		$this->runCase(42, [], true);
+		$this->runCase(-42, [], true);
+		$this->runCase(42.24, [], true);
+		$this->runCase(false, [], true);
+		$this->runCase(true, [], true);
 	}
 
 
@@ -214,14 +222,14 @@ class _UrlConfigTest extends TestCase
 	 *
 	 * @param string $url
 	 * @param array $expected
-	 * @param bool $fullTest
+	 * @param bool $internalNull allows to check for null being returned by $dsn->getUrl()
 	 */
-	private function runCase($url, array $expected, bool $fullTest = true)
+	private function runCase($url, array $expected, bool $internalNull = false)
 	{
 		$dsn = new UrlConfig($url);
 
 		// sanity test
-		Assert::same($url, $dsn->getUrl(), 'Getting the original URL');
+		Assert::same($internalNull ? null : $url, $dsn->getUrl(), 'Getting the original URL');
 
 		// test getting individual variables
 		foreach (array_keys($expected) as $key) {
@@ -229,16 +237,14 @@ class _UrlConfigTest extends TestCase
 		}
 
 		// expected PDO
-		$pdo = $url ? "{$expected['driver']}:host={$expected['host']};dbname={$expected['database']}" : '';
+		$pdo = $url && !$internalNull ? "{$expected['driver']}:host={$expected['host']};dbname={$expected['database']}" : '';
 
-		if ($fullTest) {
-			// test getting the whole mapped config
-			if ($pdo !== '') {
-				// Note: the full config also contains the PDO string
-				$expected['pdo'] = $pdo;
-			}
-			Assert::equal($expected, $dsn->getConfig(), "Getting complete configuration from $url");
+		// test getting the whole mapped config
+		if ($pdo !== '') {
+			// Note: the full config also contains the PDO string
+			$expected['pdo'] = $pdo;
 		}
+		Assert::equal($expected, $dsn->getConfig(), "Getting complete configuration from $url");
 
 		// test PDO DSN
 		Assert::same($pdo, $dsn->getPdoDsn(), 'PDO DSN string');
