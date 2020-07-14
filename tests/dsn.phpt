@@ -10,14 +10,13 @@ namespace Dakujem\Cumulus\Test;
 require_once __DIR__ . '/bootstrap.php';
 
 use Dakujem\Cumulus\Dsn;
-use Dakujem\Cumulus\UrlConfig;
 use Tester\Assert;
 use Tester\TestCase;
 
 /**
  * @author Andrej Rypak (dakujem) <xrypak@gmail.com>
  */
-class _UrlConfigTest extends TestCase
+class _DsnTest extends TestCase
 {
     protected function setUp()
     {
@@ -195,7 +194,7 @@ class _UrlConfigTest extends TestCase
     public function testUsage()
     {
         // test multiple ways to obtain config values
-        $dsn = new UrlConfig('mysql://john:secret@localhost:3306/my_db');
+        $dsn = new Dsn('mysql://john:secret@localhost:3306/my_db');
         Assert::same('localhost', $dsn->get('host'), "Getter method access");
         Assert::same('localhost', $dsn->host, "Magic props");
         Assert::same('localhost', $dsn['host'], "Array access");
@@ -229,7 +228,7 @@ class _UrlConfigTest extends TestCase
      */
     private function runCase($url, array $expected, bool $internalNull = false)
     {
-        $dsn = new UrlConfig($url);
+        $dsn = new Dsn($url);
 
         // sanity test
         Assert::same($internalNull ? null : $url, $dsn->getUrl(), 'Getting the original URL');
@@ -250,9 +249,9 @@ class _UrlConfigTest extends TestCase
         Assert::equal($expected, $dsn->getConfig(), "Getting complete configuration from $url");
 
         // test PDO DSN
-        Assert::same($pdo, $dsn->getPdoDsn(), 'PDO DSN string');
+        Assert::same($pdo, $dsn->get('pdo', ''), 'PDO DSN string');
     }
 }
 
 // run the test
-(new _UrlConfigTest)->run();
+(new _DsnTest)->run();

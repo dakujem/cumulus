@@ -11,5 +11,5 @@ $dir = '.';
 foreach (['urlconfig', 'lazyiterator',] as $test) {
     $time1 = microtime(true);
     require_once($dir . '/' . $test . '.phpt');
-    print '<hr/><pre>urlconfig.phpt | Finished at: ' . date('Y-m-d H:i:s') . ' | Runtime: ' . (microtime(true) - $time1) . 's</pre>';
+    print '<hr/><pre>' . $test . '.phpt | Finished at: ' . date('Y-m-d H:i:s') . ' | Runtime: ' . (microtime(true) - $time1) . 's</pre>';
 }
