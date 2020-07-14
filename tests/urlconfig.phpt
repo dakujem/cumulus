@@ -175,6 +175,17 @@ class _UrlConfigTest extends TestCase
 			'fragment' => null,
 		]);
 
+        $this->runCase("  mysqli://localhost/foobar\n  ", [
+            'driver' => 'mysqli',
+            'port' => null,
+            'host' => 'localhost',
+            'username' => null,
+            'password' => null,
+            'database' => 'foobar',
+            'params' => null,
+            'fragment' => null,
+        ]);
+
 		$this->runCase(null, []);
 		$this->runCase('', []);
 

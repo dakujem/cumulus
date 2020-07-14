@@ -97,7 +97,7 @@ class Dsn implements ArrayAccess
 	{
 		if ($this->config === null) {
 			$url = $this->getUrl();
-			$this->config = $url !== null && $url !== '' ? static::map(parse_url($url), $this->mappings) : [];
+			$this->config = $url !== null && $url !== '' ? static::map(parse_url(trim($url)), $this->mappings) : [];
 			$this->mappings = null;
 		}
 		return $this->config;
