@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Dakujem\Cumulus;
-
 
 /**
  * UrlConfig - provided for compatibility only.
@@ -13,19 +11,16 @@ namespace Dakujem\Cumulus;
  */
 class UrlConfig extends Dsn
 {
-
-
-	/**
-	 * Return a PDO string in format:
-	 * "mysql:host=localhost;dbname=my_db"
-	 *
-	 * @deprecated This is an alias to calling $conf->get('pdo', '')
-	 *
-	 * @return string
-	 */
-	public function getPdoDsn()
-	{
-		return $this->get('pdo', '');
-	}
-
+    /**
+     * Return a PDO string in format:
+     * "mysql:host=localhost;dbname=my_db"
+     *
+     * @deprecated This is an alias to calling $conf->get('pdo', '')
+     *
+     * @return string
+     */
+    public function getPdoDsn()
+    {
+        return $this->get('pdo', '');
+    }
 }
