@@ -8,10 +8,11 @@ Cumulus follows semantic versioning.
 
 ## v1.5
 
-TODO 🚧
-Added `Streamline` class.
+Added [`Breeze`](src/Breeze.php) class for easy building of [middleware and pipelines](doc/breeze.md).\
+Dropped PHP 7.1 support.
 
-Drop php 7.1 (to 7.4??)
+⚖ License changed to simpler and even more permissive [_Unlicense_](license.md).
+This change implies **no change to usage** of the package, commercial and non-commercial alike.
 
 
 ## v1.4 ❕
@@ -22,7 +23,7 @@ This potentially changes behaviour (albeit incorrect one), thus a new minor rele
 
 ## v1.3
 
-- dropped support for PHP 7.0
+Dropped PHP 7.0 support.
 
 
 ## v1.2
