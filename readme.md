@@ -1,5 +1,6 @@
 # ☁ Cumulus
 
+![PHP from Packagist](https://img.shields.io/packagist/php-v/dakujem/cumulus)
 [![Build Status](https://travis-ci.org/dakujem/cumulus.svg?branch=master)](https://travis-ci.org/dakujem/cumulus)
 
 A set of utilities for easier development of cloud-enabled software.
