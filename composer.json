@@ -1,6 +1,6 @@
 {
   "name": "dakujem/cumulus",
-  "description": "A set of utilities for modern development.",
+  "description": "☁ A set of utilities for easier development of cloud-enabled software.",
   "keywords": ["cloud", "microservice", "utilities", "utility", "iterator"],
   "license": ["BSD-2-Clause", "MIT", "GPL-3.0", "GPL-2.0"],
   "authors": [
