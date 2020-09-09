@@ -5,7 +5,7 @@ namespace Dakujem\Cumulus;
 /**
  * UrlConfig - provided for compatibility only.
  *
- * @deprecated Use the Dsn class direcly.
+ * @deprecated Use the Dsn class directly.
  *
  * @author Andrej Rypák (dakujem) <xrypak@gmail.com>
  */
