@@ -14,7 +14,7 @@ A set of utilities for easier development of cloud-enabled software.
 ## Documentation
 
 Included classes:
-- [`Breeze`](doc/breeze.md)
+- [`Pipeline`](doc/pipeline.md)
 	- a class for middleware and pipelines
 - [`Dsn`](doc/dsn.md)
 	- a DSN configuration wrapper and parser

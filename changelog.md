@@ -8,11 +8,13 @@ Cumulus follows semantic versioning.
 
 ## v1.5
 
-Added [`Breeze`](src/Breeze.php) class for easy building of [middleware and pipelines](doc/breeze.md).\
+Added [`Pipeline`](src/Pipeline.php) class for easy building of [middleware and pipelines](doc/pipeline.md).\
 Dropped PHP 7.1 support.
 
-⚖ License changed to simpler and even more permissive [_Unlicense_](license.md).
-This change implies **no change to usage** of the package, commercial and non-commercial alike.
+> ⚖
+>
+> License changed to simpler and even more permissive [_Unlicense_](license.md).\
+> This change implies **no change to usage** of the package, commercial and non-commercial alike.
 
 
 ## v1.4 ❕
@@ -35,7 +37,7 @@ Any type of value is now accepted by `Dsn` as a URL, but will be ignored, instea
 
 ### v1.2.0 ❕
 
-Introduces [`Dsn`](src/Dsn.php) class.
+Introduced [`Dsn`](src/Dsn.php) class.
 
 **Changes**:
 - the `UrlConfig` class has been replaced by [`Dsn`](src/Dsn.php) class and is now _deprecated_
@@ -52,8 +54,8 @@ In case you _extend_ `UrlConfig` class, you need to update your implementation.
 
 ## v1.1
 
-- added [`LazyIterator`](src/LazyIterator.php)
-- fixed bug in PDO string returned by `UrlConfig::getPdoDsn`
+Added [`LazyIterator`](src/LazyIterator.php).\
+Fixed bug in PDO string returned by `UrlConfig::getPdoDsn`.
 
 
 ## v1.0

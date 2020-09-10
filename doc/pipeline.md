@@ -2,7 +2,7 @@
 
 > Since `v1.5`
 
-Using the [`Breeze`](/src/Breeze.php) class, it is easy to create execution pipelines and middleware dispatchers.
+Using the [`Pipeline`](/Pipeline.php) class, it is easy to create execution pipelines and middleware dispatchers.
 
 
 ## Tubes
@@ -12,7 +12,7 @@ and the return value is passed from one callable to the input of the following o
 until the end is reached.
 
 ```php
-$foobarSuffix = Breeze::tube([
+$foobarSuffix = Pipeline::tube([
     function (string $a): string {
         return $a . 'foo';
     },
@@ -25,7 +25,7 @@ $foobarSuffix('iam'); // 'iamfoobar'
 ```
 
 Even though implementing a "tube" is as simple as a single foreach,
-this helper method may be useful.
+this helper method may be useful... and looks kůler.
 
 
 ## Middleware
@@ -35,7 +35,7 @@ the next callable is invoked from within the current callable.
 This allows to stop the pipeline execution prematurely.
 
 ```php
-$multiplyEvenValuesBy42 = Breeze::onion([
+$multiplyEvenValuesBy42 = Pipeline::onion([
     // this middleware is executed last (LIFO)
     function (int $val, callable $next): string {
         // do other stuff ...

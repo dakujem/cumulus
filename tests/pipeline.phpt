@@ -11,7 +11,7 @@ namespace Dakujem\Cumulus\Test;
 
 require_once __DIR__ . '/bootstrap.php';
 
-use Dakujem\Cumulus\Breeze;
+use Dakujem\Cumulus\Pipeline;
 use Tester\Assert;
 use Tester\TestCase;
 use TypeError;
@@ -20,14 +20,14 @@ use TypeError;
 /**
  * @author Andrej Rypak (dakujem) <xrypak@gmail.com>
  */
-class _BreezeTest extends TestCase
+class _PipelineTest extends TestCase
 {
 
     //--------------------------------------------------------------------------
     //----------------------- Test methods -------------------------------------
 
 
-    public function testReducer()
+    public function testSampleTube()
     {
         $pipeline = [
             function (string $a) {
@@ -37,27 +37,27 @@ class _BreezeTest extends TestCase
                 return $a . 'bar';
             },
         ];
-        Assert::same('ifoobar', Breeze::tube($pipeline)('i'));
+        Assert::same('ifoobar', Pipeline::tube($pipeline)('i'));
 
         $pipeline = [
             function (string $a) {
                 return $a . 'foo';
             },
         ];
-        Assert::same('ifoo', Breeze::tube($pipeline)('i'));
-        Assert::same('foo', Breeze::tube($pipeline)(''));
+        Assert::same('ifoo', Pipeline::tube($pipeline)('i'));
+        Assert::same('foo', Pipeline::tube($pipeline)(''));
         Assert::error(function () use ($pipeline) {
-            Breeze::tube($pipeline)(); // passing null into string type hinted callable in $pipeline
+            Pipeline::tube($pipeline)(); // passing null into string type hinted callable in $pipeline
         }, TypeError::class);
     }
 
-    public function testEmptyReducer()
+    public function testEmptyTube()
     {
-        Assert::same('i', Breeze::tube([])('i'));
-        Assert::same('', Breeze::tube([])(''));
-        Assert::same(42, Breeze::tube([])(42));
-        Assert::same(0, Breeze::tube([])(0));
-        Assert::same(null, Breeze::tube([])(null));
+        Assert::same('i', Pipeline::tube([])('i'));
+        Assert::same('', Pipeline::tube([])(''));
+        Assert::same(42, Pipeline::tube([])(42));
+        Assert::same(0, Pipeline::tube([])(0));
+        Assert::same(null, Pipeline::tube([])(null));
     }
 
     public function testOnion()
@@ -74,10 +74,10 @@ class _BreezeTest extends TestCase
                 return $next(array_merge($passable, ['Hello', 'world']));
             },
         ];
-        Assert::same('Hello world.', Breeze::onion($stages)([]));
+        Assert::same('Hello world.', Pipeline::onion($stages)([]));
 
         // Concatenate using a space character and add a dot character at the end:
-        $concatenate = Breeze::onion([
+        $concatenate = Pipeline::onion([
             function (string $passable, callable $next) {
                 return $next($passable . '.');
             },
@@ -103,11 +103,11 @@ class _BreezeTest extends TestCase
                 return $next($var + 3); // add 3
             },
         ];
-        Assert::same((5 + 3) * 2, Breeze::onion($stages)(5));
-        Assert::same((5 * 2) + 3, Breeze::onion(array_reverse($stages))(5));
+        Assert::same((5 + 3) * 2, Pipeline::onion($stages)(5));
+        Assert::same((5 * 2) + 3, Pipeline::onion(array_reverse($stages))(5));
 
-        Assert::same((5 * 2) + 3, Breeze::invertedOnion($stages)(5));
-        Assert::same((5 + 3) * 2, Breeze::invertedOnion(array_reverse($stages))(5));
+        Assert::same((5 * 2) + 3, Pipeline::invertedOnion($stages)(5));
+        Assert::same((5 + 3) * 2, Pipeline::invertedOnion(array_reverse($stages))(5));
     }
 
     public function testMiddleware()
@@ -132,7 +132,7 @@ class _BreezeTest extends TestCase
                 return 'Message: ' . $next($val * 3);
             },
         ];
-        $app = Breeze::onion($middleware);
+        $app = Pipeline::onion($middleware);
         Assert::same('Message: 15', $app(5));
         Assert::same('Message: The result is positive: 6', $app(2));
         Assert::same('Message: The result is zero: 0', $app(0));
@@ -142,11 +142,11 @@ class _BreezeTest extends TestCase
 
     public function testEmptyOnion()
     {
-        Assert::same('i', Breeze::onion([])('i'));
-        Assert::same('', Breeze::onion([])(''));
-        Assert::same(42, Breeze::onion([])(42));
-        Assert::same(0, Breeze::onion([])(0));
-        Assert::same(null, Breeze::onion([])(null));
+        Assert::same('i', Pipeline::onion([])('i'));
+        Assert::same('', Pipeline::onion([])(''));
+        Assert::same(42, Pipeline::onion([])(42));
+        Assert::same(0, Pipeline::onion([])(0));
+        Assert::same(null, Pipeline::onion([])(null));
     }
 
 
@@ -157,4 +157,4 @@ class _BreezeTest extends TestCase
 }
 
 // run the test
-(new _BreezeTest)->run();
+(new _PipelineTest)->run();
