@@ -24,6 +24,29 @@ Included classes:
 
 ## Examples
 
+**Pipelines & middleware**
+```php
+$foobarSuffixTube = Pipeline::tube([
+    function (string $a): string {
+        return $a . 'foo';
+    },
+    function (string $a): string {
+        return $a . 'bar';
+    },
+]);
+$foobarSuffixTube('iam'); // 'iamfoobar'
+
+$foobarPrefixMiddleware = Pipeline::onion([
+    function (string $a, callable $next): string {
+        return $next('bar' . $a);
+    },
+    function (string $a, callable $next): string {
+        return $next('foo' . $a);
+    },
+]);
+$foobarPrefixMiddleware('youare'); // 'foobaryouare'
+```
+
 **Dsn**
 ```php
 $dsn = new Dsn('mysqli://john:secret@localhost/my_db');
@@ -40,7 +63,7 @@ $pass = $dsn->password ?? '';
 ```
 
 
-## Tests
+## Testing
 
 Run unit tests using the following command:
 

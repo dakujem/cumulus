@@ -1,5 +1,7 @@
 # Middleware and Pipelines
 
+> 📖 back to [readme](../readme.md)
+
 > Since `v1.5`
 
 Using the [`Pipeline`](/Pipeline.php) class,
@@ -82,6 +84,7 @@ $multiplyEvenValuesBy42 = Pipeline::onion([
         return $next($val);
     },
 ]);
+
 $multiplyEvenValuesBy42(2); // 84 ; because 2 * 42 = 84
 $multiplyEvenValuesBy42(3); //  3 ; because the inner middleware is not invoked
 ```
