@@ -1,7 +1,7 @@
 {
   "name": "dakujem/cumulus",
   "description": "☁ A set of utilities for easier development of cloud-enabled software.",
-  "keywords": ["cloud", "microservice", "utilities", "utility", "iterator"],
+  "keywords": ["utility", "utilities", "cloud", "iterator", "pipeline", "middleware"],
   "license": "Unlicense",
   "authors": [
     {
