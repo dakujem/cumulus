@@ -21,22 +21,22 @@ final class Pipeline
      *   input  --> | Stage1 | --> | Stage2 | --> | Stage3 | --> result
      *              +--------+     +--------+     +--------+
      *
-     * @param callable[] $stages an array of callables with signature fn($x):$y
+     * @param callable[]|iterable $stages an array of callables with signature fn($x):$y
      * @return callable Returns a function with signature fn($x=null):$y
      */
-    public static function tube(array $stages): callable
+    public static function tube(iterable $stages): callable
     {
         return function ($passable = null) use ($stages) {
-            return array_reduce($stages, function ($passable, callable $callable) {
-                return call_user_func($callable, $passable);
-            }, $passable);
+            foreach ($stages as $stage) {
+                $passable = call_user_func($stage, $passable);
+            }
+            return $passable;
         };
         // ^ rough equivalent of:
-        // return function ($passable) use ($stages) {
-        //     foreach ($stages as $stage) {
-        //         $passable = call_user_func($stage, $passable);
-        //     }
-        //     return $passable;
+        // return function ($passable = null) use ($stages) {
+        //     return array_reduce($stages, function ($passable, callable $callable) {
+        //         return call_user_func($callable, $passable);
+        //     }, $passable);
         // };
     }
 
