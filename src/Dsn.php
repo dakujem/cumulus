@@ -75,7 +75,7 @@ class Dsn implements ArrayAccess
      * Dsn.
      * Parses a URL into components and maps them to a configuration optimized for setting up a service.
      *
-     * @param string|callable|null $url passing a callable will call it on-demand, the return value should be a string.
+     * @param string|callable|null $url if a callable is passed here, it will be resolved at first access and should return a string
      * @param array $mappings custom config mappings, this will be merged with the default mappings
      */
     public function __construct($url = null, array $mappings = null)
