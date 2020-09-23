@@ -28,14 +28,14 @@ final class Pipeline
     {
         return function ($passable = null) use ($stages) {
             foreach ($stages as $stage) {
-                $passable = call_user_func($stage, $passable);
+                $passable = $stage($passable);
             }
             return $passable;
         };
-        // ^ rough equivalent of:
+        // ^ rough equivalent of map-reduce:
         // return function ($passable = null) use ($stages) {
         //     return array_reduce($stages, function ($passable, callable $callable) {
-        //         return call_user_func($callable, $passable);
+        //         return $callable($passable);
         //     }, $passable);
         // };
     }
@@ -131,12 +131,12 @@ final class Pipeline
                     // Note: array_pop (with array_reverse) is used instead of array_shift for performance reasons
                     $current = array_pop($pipeline);
                     // Note: The wrapper function from the previous iteration becomes the $next argument for current stage.
-                    // $next = fn($value) => call_user_func($current, $value, $previous ?? static::identity()); // PHP 7.4 onwards
+                    // $next = fn($value) => $current($value, $previous ?? static::identity()); // PHP 7.4 onwards
                     $next = function ($value) use ($current, $previous) {
-                        return call_user_func($current, $value, $previous ?? static::identity());
+                        return $current($value, $previous ?? static::identity());
                     };
                     // Note: The $next wrapper becomes $previous in the following iteration.
-                    return call_user_func($buildPipeline, $pipeline, $next);
+                    return $buildPipeline($pipeline, $next);
                 }
 
                 //
@@ -147,14 +147,14 @@ final class Pipeline
                 //   The $previous function always has signature fn($val):$result,
                 //   as it is provided by the next stage using static closure variables.
                 //
-                // return fn($value) => call_user_func($previous, $value); // PHP 7.4 onwards
+                // return fn($value) => $previous($value); // PHP 7.4 onwards
                 return function ($value) use ($previous) {
-                    return call_user_func($previous, $value);
+                    return $previous($value);
                 };
             };
 
             // Initiate the recursive function.
-            return call_user_func($buildPipeline, $reversedMiddlewareStack, null);
+            return $buildPipeline($reversedMiddlewareStack, null);
         }
 
         // In case the pipeline is empty, return an identity function f(x)=x right away.

@@ -121,7 +121,7 @@ class Dsn implements ArrayAccess
     public function getUrl() //:?string
     {
         if ($this->url !== null && !is_string($this->url) && is_callable($this->url)) {
-            $this->url = call_user_func($this->url);
+            $this->url = ($this->url)();
         }
         if ($this->url !== null && !is_string($this->url)) {
 //			throw new LogicException(sprintf('An invalid URL of type %s has been provided.', is_object($this->url) ? get_class($this->url) : gettype($this->url)));
@@ -174,7 +174,7 @@ class Dsn implements ArrayAccess
     {
         $res = [];
         foreach ($mappings as $name => $mapping) {
-            $res[$name] = is_scalar($mapping) ? ($components[$mapping] ?? null) : call_user_func($mapping, $components, $name);
+            $res[$name] = is_scalar($mapping) ? ($components[$mapping] ?? null) : $mapping($components, $name);
         }
         return $res;
     }
@@ -229,12 +229,12 @@ class Dsn implements ArrayAccess
 
                 // array (recursion)
                 if (is_array($val)) {
-                    $val = call_user_func($foonc, $val);
+                    $val = $foonc($val);
                 }
             });
             return $params;
         };
-        return call_user_func($foonc, $params);
+        return $foonc($params);
     }
 
     /**
