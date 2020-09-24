@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Dakujem\Cumulus;
 
 use ArrayIterator;
@@ -67,7 +69,7 @@ class LazyIterator implements OuterIterator
     public function getInnerIterator(): Iterator
     {
         if ($this->iterator === null) {
-            $res = call_user_func($this->provider);
+            $res = ($this->provider)();
             if (is_array($res)) {
                 $this->iterator = new ArrayIterator($res);
             } elseif ($res instanceof Traversable) {
@@ -83,7 +85,7 @@ class LazyIterator implements OuterIterator
     {
         $current = $this->getInnerIterator()->current();
         foreach ($this->pipeline as $mapper) {
-            $current = call_user_func($mapper, $current, $this->key());
+            $current = $mapper($current, $this->key());
         }
         return $current;
     }
