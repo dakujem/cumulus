@@ -3,7 +3,8 @@
 
 > 📖 back to [readme](readme.md)
 
-Cumulus follows semantic versioning.
+Cumulus follows semantic versioning.\
+Any issues should be reported.
 
 
 ## v1.5
@@ -14,13 +15,16 @@ Dropped PHP 7.1 support.
 > ⚖
 >
 > License changed to simpler and even more permissive [_Unlicense_](license.md).\
-> This change implies **no change to usage** of the package, commercial and non-commercial alike.
+> This change implies **no change to usage** of the package,
+> commercial and non-commercial alike.
 
 
 ## v1.4 ❕
 
-Added `trim` to prevent adding `_` char instead of unintentional white space chars by [`parse_url`](https://www.php.net/manual/en/function.parse-url.php).
-This potentially changes behaviour (albeit incorrect one), thus a new minor release and not a patch.
+Added `trim` to prevent adding `_` char instead of unintentional white space chars by
+[`parse_url`](https://www.php.net/manual/en/function.parse-url.php).
+This potentially changes behaviour (albeit incorrect one) in an edge case,
+thus a new minor release and not a patch.
 
 
 ## v1.3

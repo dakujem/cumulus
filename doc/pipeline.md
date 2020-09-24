@@ -36,7 +36,8 @@ $foobarSuffix('iam'); // 'iamfoobar'
 ```
 
 Even though implementing a "tube" is as simple as typing a single foreach,
-this helper method may be useful... and looks kůler (jk 😉).
+this helper method may be useful when encapsulating algorithms...
+and it looks kůler (jk 😉).
 
 A tube can be composed using an array or any traversable object.
 
@@ -150,3 +151,9 @@ $result = Pipeline::onion($input);
 
 If you are interested in this kind of encapsulation or interface,
 see [this test case](../tests/pipes.phpt) for a working code. 
+
+
+## Exception Handling
+
+The pipelines do not catch nor suppress any exceptions,
+exception handling is left entirely to the user's responsibility.

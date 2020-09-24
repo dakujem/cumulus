@@ -4,7 +4,7 @@
 ![PHP 8 ready](https://img.shields.io/static/v1?label=php%208&message=ready%20%F0%9F%91%8D&color=green)
 [![Build Status](https://travis-ci.org/dakujem/cumulus.svg?branch=master)](https://travis-ci.org/dakujem/cumulus)
 
-A set of utilities for easier development of cloud-enabled software.
+A set of plug-in utilities for easier development of cloud-enabled software.
 
 > 💿 `composer require dakujem/cumulus`
 >
@@ -20,6 +20,8 @@ Included classes:
 	- a DSN configuration wrapper and parser
 - [`LazyIterator`](doc/lazyIterator.md)
 	- an iterator for on-demand data provisioning
+
+As of now, the library has no external dependencies.
 
 
 ## Examples
@@ -46,6 +48,7 @@ $foobarPrefixMiddleware = Pipeline::onion([
 ]);
 $foobarPrefixMiddleware('youare'); // 'foobaryouare'
 ```
+More in the documentation here: [Middleware and Pipelines](doc/pipeline.md).
 
 **Dsn**
 ```php
@@ -61,6 +64,7 @@ $user = $dsn->username;
 $user = $dsn['username'];
 $pass = $dsn->password ?? '';
 ```
+More in the documentation here: [Dsn (Data Source Name)](doc/dsn.md).
 
 
 ## Testing
