@@ -11,6 +11,7 @@ namespace Dakujem\Cumulus\Test;
 
 require_once __DIR__ . '/bootstrap.php';
 
+use ArrayIterator;
 use Dakujem\Cumulus\Pipeline;
 use Tester\Assert;
 use Tester\TestCase;
@@ -36,6 +37,7 @@ class _OnionTest extends TestCase
             },
         ];
         Assert::same('Hello world.', Pipeline::onion($stages)([]));
+        Assert::same('Hello world.', Pipeline::onion(new ArrayIterator($stages))([]));
 
         // Concatenate using a space character and add a dot character at the end:
         $concatenate = Pipeline::onion([
@@ -64,11 +66,21 @@ class _OnionTest extends TestCase
                 return $next($var + 3); // add 3
             },
         ];
-        Assert::same((5 + 3) * 2, Pipeline::onion($stages)(5));
-        Assert::same((5 * 2) + 3, Pipeline::onion(array_reverse($stages))(5));
+        $reversedStages = array_reverse($stages);
 
-        Assert::same((5 * 2) + 3, Pipeline::invertedOnion($stages)(5));
-        Assert::same((5 + 3) * 2, Pipeline::invertedOnion(array_reverse($stages))(5));
+        $test = function (iterable $stages, iterable $reversedStages): void {
+            Assert::same((5 + 3) * 2, Pipeline::onion($stages)(5));
+            Assert::same((5 * 2) + 3, Pipeline::onion($reversedStages)(5));
+
+            Assert::same((5 * 2) + 3, Pipeline::invertedOnion($stages)(5));
+            Assert::same((5 + 3) * 2, Pipeline::invertedOnion($reversedStages)(5));
+        };
+
+        // arrays
+        $test($stages, $reversedStages);
+
+        // iterable objects
+        $test(new ArrayIterator($stages), new ArrayIterator($reversedStages));
     }
 
     public function testMiddleware()
@@ -93,12 +105,17 @@ class _OnionTest extends TestCase
                 return 'Message: ' . $next($val * 3);
             },
         ];
-        $app = Pipeline::onion($middleware);
-        Assert::same('Message: 15', $app(5));
-        Assert::same('Message: The result is positive: 6', $app(2));
-        Assert::same('Message: The result is zero: 0', $app(0));
-        Assert::same('Message: -9', $app(-3));
-        Assert::same('Message: The result is negative: -12', $app(-4));
+        $test = function ($middleware) {
+            $app = Pipeline::onion($middleware);
+            Assert::same('Message: 15', $app(5));
+            Assert::same('Message: The result is positive: 6', $app(2));
+            Assert::same('Message: The result is zero: 0', $app(0));
+            Assert::same('Message: -9', $app(-3));
+            Assert::same('Message: The result is negative: -12', $app(-4));
+        };
+
+        $test($middleware);
+        $test(new ArrayIterator($middleware));
     }
 
     public function testEmptyOnion()

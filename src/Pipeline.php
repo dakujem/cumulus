@@ -12,7 +12,7 @@ namespace Dakujem\Cumulus;
 final class Pipeline
 {
     /**
-     * Builds a simple callable pipeline that executes all callables in $stages
+     * Builds a simple FIFO callable pipeline that executes all callables in $stages
      * and passes their return value from one to another, returning the result of the last one.
      *
      * Pipeline diagram for [Stage1, Stage2, Stage3]:
@@ -61,9 +61,11 @@ final class Pipeline
      * @param callable[] $stages an array of callables with signature fn($x,callable $next):$y
      * @return callable Returns a callable with signature fn($x):$y
      */
-    public static function onion(array $stages): callable
+    public static function onion(iterable $stages): callable
     {
-        return static::buildInvertedMiddlewareDispatcher(array_reverse($stages));
+        return static::buildInvertedMiddlewareDispatcher(
+            array_reverse(is_array($stages) ? $stages : iterator_to_array($stages))
+        );
     }
 
     /**
@@ -85,9 +87,11 @@ final class Pipeline
      * @param callable[] $stages an array of callables with signature fn($x,callable $next):$y
      * @return callable Returns a callable with signature fn($x):$y
      */
-    public static function invertedOnion(array $stages): callable
+    public static function invertedOnion(iterable $stages): callable
     {
-        return static::buildInvertedMiddlewareDispatcher($stages);
+        return static::buildInvertedMiddlewareDispatcher(
+            is_array($stages) ? $stages : iterator_to_array($stages)
+        );
     }
 
     /**
@@ -106,6 +110,11 @@ final class Pipeline
 
     /**
      * @internal
+     *
+     * TODO Possible performance optimizations:
+     *      An algorithm might exist that would not need to convert a Traversable object into an array.
+     *      An algorithm might exist that would not need to reverse the stages in the default "onion" mode.
+     *      For real world use both of these optimizations would probably be negligible though.
      *
      * @param callable[] $reversedMiddlewareStack
      * @return callable Returns a callable with signature fn($x):$y

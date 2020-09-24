@@ -2,7 +2,7 @@
 
 > 📖 back to [readme](../readme.md)
 
-an iterator that will wrap a collection provider function and only call it once actually needed
+[`LazyIterator`](../src/LazyIterator.php) is an iterator that will wrap a collection provider function and only call it once actually needed
 
 - when an iterable collection must be passed somewhere but the collection has not yet been fetched
 - when mapping of the elements of the set is needed, but the set is lazy-loaded itself (may save memory)

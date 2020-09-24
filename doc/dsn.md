@@ -5,7 +5,7 @@
 - replace multiple ENV variables by a single URL DSN string
 - ideal for cloud applications using remote services
 
-Class `Dsn` is useful for connection configurations that use URL DSNs
+Class [`Dsn`](../src/Dsn.php) is useful for connection configurations that use URL DSNs
 when a PHP app needs separate config fields or a PDO string,
 or when one simply wants to squash multiple ENV variables into one.
 

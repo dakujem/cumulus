@@ -35,8 +35,10 @@ $foobarSuffix = Pipeline::tube([
 $foobarSuffix('iam'); // 'iamfoobar'
 ```
 
-Even though implementing a "tube" is as simple as a single foreach,
-this helper method may be useful... and looks kůler.
+Even though implementing a "tube" is as simple as typing a single foreach,
+this helper method may be useful... and looks kůler (jk 😉).
+
+A tube can be composed using an array or any traversable object.
 
 
 ## Middleware
@@ -94,6 +96,8 @@ Sorry I could not come up with a more reasonable yet simple enough example 🤷�
 > Note that there is also a `Pipeline::invertedOnion` method,
 > that treats the stages in a FIFO manner (the first middleware is executed first).
 
+An onion pipeline can be created from an array or any traversable object.
+
 
 ### More on Middleware
 
@@ -118,3 +122,31 @@ improving readability of the core code and flexibility of the whole solution.
 
 Of course there are other technique that should be considered, like events/hooks.\
 As always, try to use the right tool for the job. ✌
+
+
+## Fluent Builder Interface
+
+It is trivial to implement a fluent pipeline builder.\
+This library does not provide one,
+but it includes a working (and tested) example of such a class.
+
+It is used like this:
+```php
+$pipeline = (new OnionPipeline())
+    ->pipe(function (string $passable, callable $next) {
+        return $next($passable . '.');
+    })
+    ->pipe(function (array $passable, callable $next) {
+        return $next(implode(' ', $passable));
+    })
+    ->pipe(function (array $passable, callable $next) {
+        return $next(array_merge($passable, ['Hello', 'world']));
+    })
+;
+$result = $pipeline->execute($input); // internally calls Pipeline::onion
+// or explicitly
+$result = Pipeline::onion($input);
+```
+
+If you are interested in this kind of encapsulation or interface,
+see [this test case](../tests/pipes.phpt) for a working code. 
