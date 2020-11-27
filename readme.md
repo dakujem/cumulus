@@ -1,7 +1,7 @@
 # ☁ Cumulus
 
 ![PHP from Packagist](https://img.shields.io/packagist/php-v/dakujem/cumulus)
-![PHP 8 ready](https://img.shields.io/static/v1?label=php%208&message=ready%20%F0%9F%91%8D&color=green)
+![PHP 8 ready & tested](https://img.shields.io/static/v1?label=php%208&message=tested%20%F0%9F%91%8D&color=green)
 [![Build Status](https://travis-ci.org/dakujem/cumulus.svg?branch=master)](https://travis-ci.org/dakujem/cumulus)
 
 A set of plug-in utilities for easier development of cloud-enabled software.
