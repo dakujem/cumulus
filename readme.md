@@ -14,19 +14,22 @@ A set of plug-in utilities for easier development of cloud-enabled software.
 ## Documentation
 
 Included classes:
-- [`Pipeline`](doc/pipeline.md)
-	- a class for middleware and pipelines
-- [`Dsn`](doc/dsn.md)
-	- a DSN configuration wrapper and parser
-- [`LazyIterator`](doc/lazyIterator.md)
-	- an iterator for on-demand data provisioning
+- **`Pipeline`**
+  - 👉 [Middleware and Pipelines](doc/pipeline.md)
+  - a class for middleware and pipelines
+- **`Dsn`**
+  - 👉 [Data Source Name](doc/dsn.md)
+  - a DSN configuration wrapper and parser
+- **`LazyIterator`**
+  - 👉 [LazyIterator](doc/lazyIterator.md)
+  - an iterator for on-demand data provisioning
 
 As of now, the library has no external dependencies.
 
 
 ## Compatibility
 
-| Cumulus | PHP |
+| `dakujem/cumulus` | PHP |
 |---------|-----|
 | `^2.0` | `^8` onwards |
 | `^1.5` | `7.2`, `7.3`, `7.4`, `8.0` |
