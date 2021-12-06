@@ -39,9 +39,9 @@ class LazyIterator implements OuterIterator
     /**
      * The inner iterator is created from the result returned by the provider.
      *
-     * @var Iterator
+     * @var Iterator|null
      */
-    private $iterator = null;
+    private ?Iterator $iterator = null;
 
     /**
      * An array of item mappers that act as a pipeline.
@@ -52,7 +52,7 @@ class LazyIterator implements OuterIterator
      *
      * @var callable[]
      */
-    private $pipeline = [];
+    private array $pipeline = [];
 
     public function __construct(callable $provider, callable $mapper = null)
     {
@@ -81,7 +81,7 @@ class LazyIterator implements OuterIterator
         return $this->iterator;
     }
 
-    public function current()
+    public function current(): mixed
     {
         $current = $this->getInnerIterator()->current();
         foreach ($this->pipeline as $mapper) {
@@ -90,7 +90,7 @@ class LazyIterator implements OuterIterator
         return $current;
     }
 
-    public function key()
+    public function key(): mixed
     {
         return $this->getInnerIterator()->key();
     }

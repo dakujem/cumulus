@@ -1,7 +1,14 @@
 {
   "name": "dakujem/cumulus",
   "description": "☁ A set of utilities for easier development of cloud-enabled software.",
-  "keywords": ["utility", "utilities", "cloud", "iterator", "pipeline", "middleware"],
+  "keywords": [
+    "utility",
+    "utilities",
+    "cloud",
+    "iterator",
+    "pipeline",
+    "middleware"
+  ],
   "license": "Unlicense",
   "authors": [
     {
@@ -10,11 +17,11 @@
     }
   ],
   "require": {
-    "php": "^7.2 || ~8.0.0"
+    "php": "^8.0"
   },
   "require-dev": {
-    "nette/tester": "^2.3.2",
-    "tracy/tracy": "^2.3"
+    "nette/tester": "^2.4.1",
+    "tracy/tracy": "^2.8.9"
   },
   "autoload": {
     "psr-4": {
@@ -30,5 +37,10 @@
     "test": "Run application tests. (defaults to local tests)",
     "test:local": "Run application tests with local configuration.",
     "test:ci": "Run application tests, provide configuration options as needed."
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-feat/php81": "2.0.x-dev"
+    }
   }
 }

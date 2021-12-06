@@ -16,6 +16,7 @@ use Dakujem\Cumulus\Pipeline;
 use IteratorAggregate;
 use Tester\Assert;
 use Tester\TestCase;
+use Traversable;
 
 abstract class _PipelineHelper implements IteratorAggregate
 {
@@ -35,7 +36,7 @@ abstract class _PipelineHelper implements IteratorAggregate
 
     abstract public function execute($passable = null);
 
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return new ArrayIterator($this->stages);
     }

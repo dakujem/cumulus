@@ -43,7 +43,7 @@ class Dsn implements ArrayAccess
     /**
      * The configuration URL.
      *
-     * @var string
+     * @var string|callable|null
      */
     protected $url = null;
 
@@ -52,7 +52,7 @@ class Dsn implements ArrayAccess
      *
      * @var array|null
      */
-    protected $config = null;
+    protected ?array $config = null;
 
     /**
      * Array of mappings.
@@ -69,16 +69,16 @@ class Dsn implements ArrayAccess
      *
      * @var array|null
      */
-    protected $mappings = [];
+    protected ?array $mappings = [];
 
     /**
      * Dsn.
      * Parses a URL into components and maps them to a configuration optimized for setting up a service.
      *
      * @param string|callable|null $url if a callable is passed here, it will be resolved at first access and should return a string
-     * @param array $mappings custom config mappings, this will be merged with the default mappings
+     * @param array|null $mappings custom config mappings, this will be merged with the default mappings
      */
-    public function __construct($url = null, array $mappings = null)
+    public function __construct(string|callable|null $url = null, ?array $mappings = null)
     {
         $this->url = $url;
         // custom mappings will override the default mappings
@@ -95,7 +95,7 @@ class Dsn implements ArrayAccess
         if ($this->config === null) {
             $url = $this->getUrl();
             $this->config = $url !== null && $url !== '' ? static::map(parse_url(trim($url)), $this->mappings) : [];
-            $this->mappings = null;
+            $this->mappings = null; // TODO is this optimization necessary?
         }
         return $this->config;
     }
@@ -107,7 +107,7 @@ class Dsn implements ArrayAccess
      * @param mixed $default default value to be used if the parameter does not exist or is null
      * @return mixed the return type is defined by the type of the configuration setting
      */
-    public function get($key, $default = null)
+    public function get(string $key, mixed $default = null): mixed
     {
         return $this->getConfig()[$key] ?? $default;
     }
@@ -118,7 +118,7 @@ class Dsn implements ArrayAccess
      *
      * @return string|null
      */
-    public function getUrl() //:?string
+    public function getUrl(): ?string
     {
         if ($this->url !== null && !is_string($this->url) && is_callable($this->url)) {
             $this->url = ($this->url)();
@@ -245,7 +245,7 @@ class Dsn implements ArrayAccess
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         try {
             return json_encode($this->getConfig());
@@ -257,27 +257,27 @@ class Dsn implements ArrayAccess
     /**
      * Provide magic prop access.
      */
-    public function __get($name)
+    public function __get(string $name): mixed
     {
         return $this->get($name);
     }
 
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->get($offset);
     }
 
-    public function offsetExists($offset): bool
+    public function offsetExists(mixed $offset): bool
     {
         return $this->get($offset) !== null;
     }
 
-    public function offsetSet($offset, $value): void
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         throw new LogicException('It is not possible to mutate the configuration.');
     }
 
-    public function offsetUnset($offset): void
+    public function offsetUnset(mixed $offset): void
     {
         throw new LogicException('It is not possible to mutate the configuration.');
     }

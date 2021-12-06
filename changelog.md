@@ -7,6 +7,25 @@ Cumulus follows semantic versioning.\
 Any issues should be reported.
 
 
+## v2.0
+
+Supports PHP 8.1 and drops PHP 7 support.
+
+#### Breaking changes
+
+This version is mostly compatible with the previous one, except for some edge cases.
+
+**Dsn**
+- invalid URLs will throw
+- `Dsn::get` now only accepts `string` type as the first argument:
+  - signature updated to `Dsn::get(string $key, mixed $default = null): mixed`
+
+> 💡
+>
+> Most of these changes apply to any software migrating to PHP 8.1,\
+> other ones prevent incorrect or unintended use of the package.
+
+
 ## v1.6
 
 Dsn: PDO now contains port number, if present in the URL.

@@ -185,7 +185,7 @@ class _DsnTest extends TestCase
         $this->runCase('', []);
 
         // these tests are provided for backward compatibility
-        $this->runCase(0, [], true);
+        $this->runCase('0', [], false);
         $this->runCase(42, [], true);
         $this->runCase(-42, [], true);
         $this->runCase(42.24, [], true);
