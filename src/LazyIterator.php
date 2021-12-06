@@ -60,7 +60,7 @@ class LazyIterator implements OuterIterator
         $mapper !== null && $this->addMapper($mapper);
     }
 
-    public function addMapper(callable $callable)
+    public function addMapper(callable $callable): self
     {
         $this->pipeline[] = $callable;
         return $this;

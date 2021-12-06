@@ -102,10 +102,7 @@ final class Pipeline
      */
     public static function identity(): callable
     {
-        // return fn($v) => $v; // PHP 7.4 onwards
-        return function ($v) {
-            return $v;
-        };
+        return fn($v) => $v;
     }
 
     /**

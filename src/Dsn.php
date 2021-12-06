@@ -144,16 +144,16 @@ class Dsn implements ArrayAccess
             'host' => 'host',
             'username' => 'user',
             'password' => 'pass',
-            'database' => function ($config) {
-                // remove preceeding slash '/' from the path
+            'database' => function (array $config): ?string {
+                // remove preceding slash '/' from the path
                 return ($config['path'] ?? null) !== null ? ltrim($config['path'], '/') : null;
             },
-            'params' => function ($config) {
+            'params' => function (array $config): ?array {
                 // parse query string to native PHP types (recursively)
                 return ($config['query'] ?? null) !== null ? static::queryToNativeTypes($config['query']) : null;
             },
             'fragment' => 'fragment',
-            'pdo' => function ($config) {
+            'pdo' => function (array $config): string {
                 return
                     ($config['scheme'] ?? '') . ':host=' . ($config['host'] ?? '') .
                     ($config['port'] ?? null ? ';port=' . $config['port'] : '') .
