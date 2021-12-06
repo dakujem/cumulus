@@ -23,7 +23,7 @@
   },
   "scripts": {
     "test": "@test:local",
-    "test:local": "tester tests -C",
+    "test:local": "@php vendor/nette/tester/src/tester tests -C --colors 1",
     "test:ci": "tester tests"
   },
   "scripts-descriptions": {
