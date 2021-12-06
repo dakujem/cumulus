@@ -154,7 +154,10 @@ class Dsn implements ArrayAccess
             },
             'fragment' => 'fragment',
             'pdo' => function ($config) {
-                return ($config['scheme'] ?? '') . ':host=' . ($config['host'] ?? '') . ';dbname=' . ltrim($config['path'] ?? '', '/');
+                return
+                    ($config['scheme'] ?? '') . ':host=' . ($config['host'] ?? '') .
+                    ($config['port'] ?? null ? ';port=' . $config['port'] : '') .
+                    ';dbname=' . ltrim($config['path'] ?? '', '/');
             },
         ];
     }

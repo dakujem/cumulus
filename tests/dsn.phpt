@@ -200,9 +200,22 @@ class _DsnTest extends TestCase
         Assert::same('localhost', $dsn->get('host'), "Getter method access");
         Assert::same('localhost', $dsn->host, "Magic props");
         Assert::same('localhost', $dsn['host'], "Array access");
+    }
 
+    public function testToStringWithPort()
+    {
+        // test multiple ways to obtain config values
+        $dsn = new Dsn('mysql://john:secret@localhost:3306/my_db');
         // test __toString
-        Assert::same('{"driver":"mysql","port":3306,"host":"localhost","username":"john","password":"secret","database":"my_db","params":null,"fragment":null,"pdo":"mysql:host=localhost;dbname=my_db"}', (string)$dsn, "Convert to string");
+        Assert::same('{"driver":"mysql","port":3306,"host":"localhost","username":"john","password":"secret","database":"my_db","params":null,"fragment":null,"pdo":"mysql:host=localhost;port=3306;dbname=my_db"}', (string)$dsn, "Convert to string");
+    }
+
+    public function testToStringWithoutPort()
+    {
+        // test multiple ways to obtain config values
+        $dsn = new Dsn('mysql://john:secret@localhost/my_db');
+        // test __toString
+        Assert::same('{"driver":"mysql","port":null,"host":"localhost","username":"john","password":"secret","database":"my_db","params":null,"fragment":null,"pdo":"mysql:host=localhost;dbname=my_db"}', (string)$dsn, "Convert to string");
     }
 
     public function testValueMapping()
@@ -241,7 +254,8 @@ class _DsnTest extends TestCase
         }
 
         // expected PDO
-        $pdo = $url && !$internalNull ? "{$expected['driver']}:host={$expected['host']};dbname={$expected['database']}" : '';
+        $portPart = $expected['port'] ?? null ? "port={$expected['port']};" : '';
+        $pdo = $url && !$internalNull ? "{$expected['driver']}:host={$expected['host']};{$portPart}dbname={$expected['database']}" : '';
 
         // test getting the whole mapped config
         if ($pdo !== '') {

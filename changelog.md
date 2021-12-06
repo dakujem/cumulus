@@ -7,6 +7,15 @@ Cumulus follows semantic versioning.\
 Any issues should be reported.
 
 
+## v1.6
+
+Dsn: PDO now contains port number, if present in the URL.
+```php
+$dsn = new Dsn('mysql://localhost:3306/my_db');
+$dsn->pdo; // mysql:host=localhost;port=3306;dbname=my_db
+```
+
+
 ## v1.5
 
 Added [`Pipeline`](src/Pipeline.php) class for easy building of [middleware and pipelines](doc/pipeline.md).\

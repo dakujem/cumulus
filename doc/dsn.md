@@ -23,7 +23,7 @@ What you'll get (pseudo):
 		host => localhost
  		driver => mysqli
 		params => [lazy:true, connections:10]
-		pdo => "mysqli:host=localhost;dbname=my_db"
+		pdo => "mysqli:host=localhost;port=3306;dbname=my_db"
 ]
 ```
 
