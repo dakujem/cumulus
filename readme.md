@@ -1,7 +1,6 @@
 # ☁ Cumulus
 
 ![PHP from Packagist](https://img.shields.io/packagist/php-v/dakujem/cumulus)
-![PHP 8.1 tested](https://img.shields.io/static/v1?label=php%208&message=tested%20%F0%9F%91%8D&color=green)
 [![PHP Test](https://github.com/dakujem/cumulus/actions/workflows/php-test.yml/badge.svg)](https://github.com/dakujem/cumulus/actions/workflows/php-test.yml)
 
 A set of plug-in utilities for easier development of cloud-enabled software.
@@ -32,7 +31,8 @@ As of now, the library has no external dependencies.
 | `dakujem/cumulus` | PHP |
 |---------|-----|
 | `^2.0` | `^8` onwards |
-| `^1.5` | `7.2`, `7.3`, `7.4`, `8.0` |
+| `^1.5`, `^1.6` | `7.2`, `7.3`, `7.4`, `8.0` |
+| `^1.4` | `7.2`, `7.3`, `7.4` |
 
 
 ## Examples
