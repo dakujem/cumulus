@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Dakujem\Cumulus;
 
 use ArrayAccess;
-use Exception;
 use LogicException;
+use Stringable;
+use Throwable;
 
 /**
  * DSN-style configuration wrapper. Lazy and immutable.
@@ -38,26 +39,24 @@ use LogicException;
  *
  * @author Andrej Rypák (dakujem) <xrypak@gmail.com>
  */
-class Dsn implements ArrayAccess
+final class Dsn implements ArrayAccess, Stringable
 {
     /**
-     * The configuration URL.
+     * Mapped configuration array, or a callable resolver that returns one.
      *
-     * @var string|callable|null
+     * @var array|callable
      */
-    protected $url = null;
+    private mixed $config;
 
     /**
-     * Mapped configuration array.
+     * Dsn.
+     * Parses a URI into components using `parse_url` and maps them to a configuration optimized for setting up a service.
      *
-     * @var array|null
-     */
-    protected ?array $config = null;
-
-    /**
-     * Array of mappings.
-     * Format: [ desiredKey => mapper, ], where each mapper is either string name of a URL component or a callable
-     * Any of the URL components can be used (see parse_url documentation for more info):
+     * Mappings are key-value _pairs_ from $mappings array. Each value can be either of:
+     * - a string denoting a field from the parsed components
+     * - a callable returning the desired value, signature fn(array $components, string $key): mixed
+     *
+     * The components available to the mappings are:
      * - scheme
      * - user
      * - pass
@@ -67,35 +66,43 @@ class Dsn implements ArrayAccess
      * - query (after ? )
      * - fragment (after # )
      *
-     * @var array|null
-     */
-    protected ?array $mappings = [];
-
-    /**
-     * Dsn.
-     * Parses a URL into components and maps them to a configuration optimized for setting up a service.
+     * @see parse_url()
      *
-     * @param string|callable|null $url if a callable is passed here, it will be resolved at first access and should return a string
-     * @param array|null $mappings custom config mappings, this will be merged with the default mappings
+     * @param string|callable|null $uri a string uri or a callable that returns one (resolved at first access)
+     * @param array|null $mappings custom config mappings, this will be MERGED with the default mappings
      */
-    public function __construct(string|callable|null $url = null, ?array $mappings = null)
+    public function __construct(string|callable|null $uri = null, ?array $mappings = null)
     {
-        $this->url = $url;
-        // custom mappings will override the default mappings
-        $this->mappings = $mappings ? array_merge($this->getDefaultMappings(), $mappings) : $this->getDefaultMappings();
+        $this->config = function () use ($uri, $mappings): array {
+            $uriString = !is_string($uri) && is_callable($uri) ? ($uri)() : $uri;
+            if ($uriString !== null && !is_string($uriString)) {
+                $isProvider = !is_string($uri) && is_callable($uri);
+                throw new LogicException(sprintf(
+                    'The %s a string or null. Got %s.',
+                    $isProvider ? 'URI provider must return' : 'URI is expected to be',
+                    is_object($uriString) ? 'an instance of ' . get_class($uriString) : gettype($uriString),
+                ));
+            }
+            if ($uriString === '' || $uriString === null) {
+                return [];
+            }
+            $map = $mappings ? array_merge($this->getDefaultMappings(), $mappings) : $this->getDefaultMappings();
+            $rawComponents = parse_url(trim($uriString)); // may be `false`
+            if ($rawComponents === false) {
+                throw new LogicException('Seriously malformed URI: ' . $uriString);
+            }
+            return self::mapComponents($rawComponents, $map);
+        };
     }
 
     /**
      * Get the whole configuration array as-is.
-     *
-     * @return array
      */
     public function getConfig(): array
     {
-        if ($this->config === null) {
-            $url = $this->getUrl();
-            $this->config = $url !== null && $url !== '' ? static::map(parse_url(trim($url)), $this->mappings) : [];
-            $this->mappings = null; // TODO is this optimization necessary?
+        if (!is_array($this->config)) {
+            // resolve the configuration
+            $this->config = ($this->config)();
         }
         return $this->config;
     }
@@ -104,8 +111,8 @@ class Dsn implements ArrayAccess
      * Get corresponding configuration value for a given key.
      *
      * @param string $key
-     * @param mixed $default default value to be used if the parameter does not exist or is null
-     * @return mixed the return type is defined by the type of the configuration setting
+     * @param mixed $default default value to be used if the parameter does not exist or is `null`
+     * @return mixed the return type is defined by the mapping of the configuration setting
      */
     public function get(string $key, mixed $default = null): mixed
     {
@@ -113,28 +120,7 @@ class Dsn implements ArrayAccess
     }
 
     /**
-     * Return the original URL passed in constructor.
-     * If callable type was passed, return the result.
-     *
-     * @return string|null
-     */
-    public function getUrl(): ?string
-    {
-        if ($this->url !== null && !is_string($this->url) && is_callable($this->url)) {
-            $this->url = ($this->url)();
-        }
-        if ($this->url !== null && !is_string($this->url)) {
-			throw new LogicException(sprintf('An invalid URL of type %s has been provided.', is_object($this->url) ? get_class($this->url) : gettype($this->url)));
-            // Note: for BC reasons, invalid values are silently ignored instead of throwing an exception.
-            $this->url = null;
-        }
-        return $this->url;
-    }
-
-    /**
      * Return the default mappings used to map URL components to configuration.
-     *
-     * @return array
      */
     public function getDefaultMappings(): array
     {
@@ -168,12 +154,8 @@ class Dsn implements ArrayAccess
      * Note:
      *        The null values are intentionally not filtered out.
      *        It could otherwise cause confusion if someone expected those keys to exist in array returned by getConfig.
-     *
-     * @param array $components
-     * @param array $mappings
-     * @return array
      */
-    protected static function map(array $components, array $mappings): array
+    private static function mapComponents(array $components, array $mappings): array
     {
         $res = [];
         foreach ($mappings as $name => $mapping) {
@@ -190,14 +172,10 @@ class Dsn implements ArrayAccess
      *        'driver' => Dsn::valueMapper(['mysql' => 'mysqli'], 'scheme'),
      * ]);
      * $dsn->driver  // "mysqli"
-     *
-     * @param array $valueMap
-     * @param string $component
-     * @return callable
      */
-    public static function valueMapper(array $valueMap, string $component = null): callable
+    public static function valueMapper(array $valueMap, ?string $component = null): callable
     {
-        return function ($components, $key) use ($component, $valueMap) {
+        return function (array $components, string $key) use ($component, $valueMap): mixed {
             // if $component was not provided, use the configuration $key
             $value = $components[$component ?? $key] ?? null;
             return $valueMap[$value] ?? $value;
@@ -206,9 +184,6 @@ class Dsn implements ArrayAccess
 
     /**
      * Parse query encoded string to PHP native types (integer, double or boolean), arrays are parsed recursively.
-     *
-     * @param string $query
-     * @return array
      */
     public static function queryToNativeTypes(string $query): array
     {
@@ -242,14 +217,12 @@ class Dsn implements ArrayAccess
 
     /**
      * Casting the Dsn object to string results in a JSON-encoded string containing the configuration array.
-     *
-     * @return string
      */
     public function __toString(): string
     {
         try {
             return json_encode($this->getConfig());
-        } catch (Exception $e) {
+        } catch (Throwable) {
             return '';
         }
     }

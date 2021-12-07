@@ -16,14 +16,16 @@ Supports PHP 8.1 and drops PHP 7 support.
 This version is mostly compatible with the previous one, except for some edge cases.
 
 **Dsn**
-- invalid URLs will throw
+- `Dsn` class is now `final`. Use composition to extend functionality.
+- `Dsn::getUrl` method removed
 - `Dsn::get` now only accepts `string` type as the first argument:
-  - signature updated to `Dsn::get(string $key, mixed $default = null): mixed`
+  - signature changed to `Dsn::get(string $key, mixed $default = null): mixed`
+- if the URI provider returns something that is not a string, error is thrown
+- "seriously malformed" URIs will throw `LogicException` upon resolution
 
 > 💡
 >
-> Most of these changes apply to any software migrating to PHP 8.1,\
-> other ones prevent incorrect or unintended use of the package.
+> These changes prevent incorrect or unintended use of the package.
 
 
 ## v1.6

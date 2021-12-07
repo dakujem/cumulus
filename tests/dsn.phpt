@@ -12,8 +12,11 @@ namespace Dakujem\Cumulus\Test;
 require_once __DIR__ . '/bootstrap.php';
 
 use Dakujem\Cumulus\Dsn;
+use LogicException;
+use RuntimeException;
 use Tester\Assert;
 use Tester\TestCase;
+use TypeError;
 
 /**
  * @author Andrej Rypak (dakujem) <xrypak@gmail.com>
@@ -182,15 +185,61 @@ class _DsnTest extends TestCase
         ]);
 
         $this->runCase(null, []);
+        $this->runCase(fn() => null, []);
+        $this->runCase('', []);
+    }
+
+    /** @noinspection PhpStrictTypeCheckingInspection */
+    public function testTypeErrors()
+    {
+        Assert::throws(fn() => new Dsn(42), TypeError::class);
+        Assert::throws(fn() => new Dsn(true), TypeError::class);
+        Assert::throws(fn() => new Dsn(false), TypeError::class);
+        Assert::throws(fn() => new Dsn([]), TypeError::class);
+        Assert::throws(fn() => new Dsn((object)[]), TypeError::class);
+    }
+
+    public function testProvider()
+    {
+        $this->individual(fn() => 'foo', ['database' => 'foo']);
+        Assert::same([], (new Dsn(fn() => null))->getConfig());
+        $this->individual(fn() => null, []);
+        $this->individual(fn() => 'mysql://john:secret@localhost:3306/my_db', [
+            'database' => 'my_db',
+            'host' => 'localhost',
+            'port' => 3306,
+            'username' => 'john',
+            'password' => 'secret',
+            'driver' => 'mysql',
+        ]);
+    }
+
+    public function testProviderError()
+    {
+        Assert::throws(
+            fn() => (new Dsn(fn() => 42))->getConfig(),
+            LogicException::class,
+            'The URI provider must return a string or null. Got integer.'
+        );
+        Assert::throws(
+            fn() => (new Dsn(fn() => new RuntimeException()))->getConfig(),
+            LogicException::class,
+            'The URI provider must return a string or null. Got an instance of RuntimeException.'
+        );
+    }
+
+    public function testEdgeCases()
+    {
+        Assert::throws(fn() => (new Dsn('/foo:2019'))->getConfig(), LogicException::class);
+
         $this->runCase('', []);
 
-        // these tests are provided for backward compatibility
-        $this->runCase('0', [], false);
-        $this->runCase(42, [], true);
-        $this->runCase(-42, [], true);
-        $this->runCase(42.24, [], true);
-        $this->runCase(false, [], true);
-        $this->runCase(true, [], true);
+        $this->individual('42', ['database' => '42']);
+        $this->individual('-42', ['database' => '-42']);
+        $this->individual('-', ['database' => '-']);
+        $this->individual('~', ['database' => '~']);
+        $this->individual('/', ['database' => '']); // this is interesting
+        $this->individual('/foo', ['database' => 'foo']);
     }
 
     public function testUsage()
@@ -237,35 +286,51 @@ class _DsnTest extends TestCase
      * Note:
      *        The order of members in the $expected array matters!
      *
-     * @param string $url
+     * @param string|callable|null $url
      * @param array $expected
-     * @param bool $internalNull allows to check for null being returned by $dsn->getUrl()
+     * @param bool $internalNull check for null being returned by $dsn->getUrl()
      */
     private function runCase($url, array $expected, bool $internalNull = false)
     {
         $dsn = new Dsn($url);
-
-        // sanity test
-        Assert::same($internalNull ? null : $url, $dsn->getUrl(), 'Getting the original URL');
-
-        // test getting individual variables
-        foreach (array_keys($expected) as $key) {
-            Assert::same($expected[$key], $dsn->get($key), "Getting \"$key\" key from $url");
+        if (!is_string($url) && is_callable($url)) {
+            $url = $url();
         }
 
-        // expected PDO
+        // Test getting individual variables
+        foreach (array_keys($expected) as $key) {
+            Assert::same($expected[$key], $dsn->get($key), "The \"$key\" key from $url");
+        }
+
+        // Expected PDO
         $portPart = $expected['port'] ?? null ? "port={$expected['port']};" : '';
         $pdo = $url && !$internalNull ? "{$expected['driver']}:host={$expected['host']};{$portPart}dbname={$expected['database']}" : '';
 
-        // test getting the whole mapped config
+        // Test getting the whole mapped config
         if ($pdo !== '') {
             // Note: the full config also contains the PDO string
             $expected['pdo'] = $pdo;
         }
-        Assert::equal($expected, $dsn->getConfig(), "Getting complete configuration from $url");
+        Assert::equal($expected, $dsn->getConfig(), "Complete configuration from $url");
 
-        // test PDO DSN
+        // Test PDO DSN
         Assert::same($pdo, $dsn->get('pdo', ''), 'PDO DSN string');
+    }
+
+    /**
+     * Test individual components of the config array.
+     * All the rest components must be `null` or not be present at all.
+     */
+    private function individual(mixed $input, array $expectedValues): void
+    {
+        $config = (new Dsn($input))->getConfig();
+        foreach ($expectedValues as $componentName => $expectedValue) {
+            Assert::same($expectedValue, $config[$componentName], "Component '$componentName'");
+        }
+        $allComponents = ['driver', 'port', 'host', 'username', 'password', 'database', 'params', 'fragment',];
+        foreach (array_diff($allComponents, array_keys($expectedValues)) as $name) {
+            Assert::null($config[$name] ?? null, "Component '$name'");
+        }
     }
 }
 
