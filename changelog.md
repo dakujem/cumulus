@@ -13,9 +13,9 @@ Supports PHP 8.1 and drops PHP 7 support.
 
 #### Breaking changes
 
-This version is mostly compatible with the previous one, except for some edge cases.
+This version is mostly compatible with the previous one, except for some edge cases regarding `Dsn`. Most users won't be affected.
 
-**Dsn**
+Changes to **`Dsn`**:
 - `Dsn` class is now `final`. Use composition to extend functionality.
 - `Dsn::getUrl` method removed
 - `Dsn::get` now only accepts `string` type as the first argument:
