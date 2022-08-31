@@ -2,7 +2,7 @@
 
 ![PHP from Packagist](https://img.shields.io/packagist/php-v/dakujem/cumulus)
 [![PHP Test](https://github.com/dakujem/cumulus/actions/workflows/php-test.yml/badge.svg)](https://github.com/dakujem/cumulus/actions/workflows/php-test.yml)
-[![Coverage Status](https://coveralls.io/repos/github/dakujem/cumulus/badge.svg?branch=feat/ci-update)](https://coveralls.io/github/dakujem/cumulus?branch=feat/ci-update)
+[![Coverage Status](https://coveralls.io/repos/github/dakujem/cumulus/badge.svg?branch=trunk)](https://coveralls.io/github/dakujem/cumulus?branch=trunk)
 
 A set of plug-in utilities for easier development of cloud-enabled software.
 
