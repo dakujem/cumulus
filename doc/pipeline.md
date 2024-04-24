@@ -35,9 +35,8 @@ $foobarSuffix = Pipeline::tube([
 $foobarSuffix('iam'); // 'iamfoobar'
 ```
 
-Even though implementing a "tube" is as simple as typing a single foreach,
-this helper method may be useful when encapsulating algorithms...
-and it looks kůler (jk 😉).
+Even though implementing a "tube" may be simple as typing a single `foreach`,
+this helper method gets useful when encapsulating algorithms...
 
 A tube can be composed using an array or any traversable object.
 
