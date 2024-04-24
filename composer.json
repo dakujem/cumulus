@@ -42,5 +42,11 @@
     "branch-alias": {
       "dev-feat/php81": "2.0.x-dev"
     }
+  },
+  "archive": {
+    "exclude": [
+      "/tests",
+      "/.github"
+    ]
   }
 }
