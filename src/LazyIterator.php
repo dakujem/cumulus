@@ -54,7 +54,7 @@ class LazyIterator implements OuterIterator
      */
     private array $pipeline = [];
 
-    public function __construct(callable $provider, callable $mapper = null)
+    public function __construct(callable $provider, ?callable $mapper = null)
     {
         $this->provider = $provider;
         $mapper !== null && $this->addMapper($mapper);
